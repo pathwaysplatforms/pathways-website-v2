@@ -1,6 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Urbanist } from "next/font/google";
+import { PathLine } from "@/components/layout/PathLine";
+import { TOUR_STEPS } from "@/lib/fixtures";
 import "./globals.css";
+
+/** The tour anchors PathLine tracks. Mounted once, for the whole scroll. */
+const TOUR_ANCHORS = TOUR_STEPS.map((step) => step.anchor);
 
 const urbanist = Urbanist({
   subsets: ["latin"],
@@ -38,7 +43,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={urbanist.variable}>
-      <body>{children}</body>
+      <body>
+        <PathLine sections={TOUR_ANCHORS} />
+        {children}
+      </body>
     </html>
   );
 }
