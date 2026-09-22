@@ -25,10 +25,10 @@ const MOCKS: Record<SpecimenId, ReactNode> = {
 /**
  * The run of five product specimens.
  *
- * Surfaces alternate down the run: page stock, then a shallow recess milled
- * into it. That keeps the bands reading as one continuous material rather
- * than a stack of cards. The column split alternates too — it is set per
- * specimen in lib/fixtures.ts and is never the same twice in a row.
+ * The bands share one continuous canvas — the ambient light behind the page
+ * is what separates them, not alternating fills. The column split alternates
+ * instead: it is set per specimen in lib/fixtures.ts and is never the same
+ * twice in a row.
  */
 export function Specimens() {
   return (
@@ -38,7 +38,7 @@ export function Specimens() {
           key={specimen.id}
           specimen={specimen}
           mock={MOCKS[specimen.id]}
-          bg={index % 2 === 0 ? "paper" : "sunk"}
+          lit={index === 0}
         />
       ))}
     </>

@@ -1,102 +1,110 @@
 @import "tailwindcss";
 
 /* ===========================================================================
-   PATHWAYS — skeuomorphic material system.
+   PATHWAYS — neo-skeuomorphic material system.
 
-   Every surface here is a real material lit from above: warm paper, brushed
-   aluminium, machined steel, bevelled glass, polished brass. The grammar is
-   always the same four layers, and breaking it is what makes skeuomorphism
-   look like a 2010 tutorial instead of an instrument:
+   Not retro skeuomorphism. There is no paper, no brass, no brushed metal and
+   no engraved serif here: those imitate real objects. This system imitates
+   LIGHT instead, on materials that only exist on a screen — frosted glass,
+   tinted acrylic, soft extrusion.
 
-     1. a gradient on the surface (lighter at the top — light comes from above)
-     2. a 1px inset highlight along the top edge
-     3. a 1px inset shade along the bottom edge
-     4. a two-part drop shadow: one tight contact shadow, one soft ambient
+   Four rules hold the whole thing together:
 
-   Text engraves (dark text, light shadow BELOW) on light materials and
-   embosses (light text, dark shadow ABOVE) on dark ones. Never mix them.
+     1. SPECULAR EDGE. Every raised surface carries a bright 1px top lip and a
+        fainter 1px rim all the way round. That highlight, not a border, is
+        what makes an edge read as a physical edge.
+     2. TINTED SHADOW. Shadows are never black. They take the hue of the
+        ambient light in the page (a cool indigo), which is what separates
+        this from 2020 neumorphism's dead grey.
+     3. STACKED ELEVATION. Three shadows per surface — a 1px contact, a mid
+        spread, and a wide ambient — each softer and fainter than the last.
+     4. AMBIENT BLOOM. Colour comes from large, very soft light sources behind
+        the content, not from filled blocks.
+
+   Recessed surfaces invert 1 and 3: the shadow goes inside, the highlight
+   goes underneath.
    =========================================================================== */
 
 @theme {
-  --color-pw-ink: #2A2825;
-  --color-pw-ink-soft: #5E594F;
-  --color-pw-ink-faint: #8C857A;
-  --color-pw-paper: #E9E5DD;
-  --color-pw-paper-dark: #D6D1C6;
-  --color-pw-card: #FAF8F4;
-  --color-pw-steel: #C9C4B8;
-  --color-pw-slate: #2E3238;
-  --color-pw-slate-deep: #1B1E22;
-  --color-pw-accent: #1F4FA8;
-  --color-pw-accent-lit: #3B76DC;
-  --color-pw-brass: #B08D46;
+  --color-nx-ink: #101528;
+  --color-nx-ink-soft: #5A6486;
+  --color-nx-ink-faint: #8B93AE;
+  --color-nx-line: rgba(18, 26, 56, 0.08);
+  --color-nx-canvas: #EDF0F7;
+  --color-nx-surface: #FFFFFF;
+  --color-nx-deep: #141A2E;
+  --color-nx-deeper: #0C1020;
+  --color-nx-accent: #4F7DF3;
+  --color-nx-accent-deep: #3B5BDB;
+  --color-nx-accent-lit: #7AA2FF;
+  --color-nx-violet: #8B5CF6;
+  --color-nx-cyan: #38BDF8;
 
-  --font-display: var(--font-source-serif), Georgia, serif;
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
 
-  --container-pw-shell: 1360px;
+  --container-nx-shell: 1280px;
 }
 
 :root {
-  /* --- light ------------------------------------------------------------- */
-  --sk-hi: rgba(255, 255, 255, 0.92);
-  --sk-hi-soft: rgba(255, 255, 255, 0.55);
-  --sk-lo: rgba(60, 52, 40, 0.16);
+  /* The ambient hue every shadow is tinted with. */
+  --nx-shade: 23, 34, 78;
 
-  /* --- elevation: contact shadow + ambient shadow, always paired ---------- */
-  --sk-raise-sm: 0 1px 1px rgba(45, 38, 28, 0.13), 0 2px 6px rgba(45, 38, 28, 0.09);
-  --sk-raise: 0 1px 1px rgba(45, 38, 28, 0.16), 0 4px 10px rgba(45, 38, 28, 0.11), 0 14px 30px rgba(45, 38, 28, 0.09);
-  --sk-raise-lg: 0 2px 3px rgba(45, 38, 28, 0.17), 0 10px 24px rgba(45, 38, 28, 0.14), 0 32px 64px rgba(45, 38, 28, 0.16);
+  /* --- elevation: contact, spread, ambient -------------------------------- */
+  --nx-e1:
+    0 1px 2px rgba(var(--nx-shade), 0.06),
+    0 3px 8px -2px rgba(var(--nx-shade), 0.08);
+  --nx-e2:
+    0 1px 2px rgba(var(--nx-shade), 0.07),
+    0 8px 20px -6px rgba(var(--nx-shade), 0.12),
+    0 20px 40px -16px rgba(var(--nx-shade), 0.14);
+  --nx-e3:
+    0 1px 2px rgba(var(--nx-shade), 0.08),
+    0 14px 32px -10px rgba(var(--nx-shade), 0.16),
+    0 40px 80px -24px rgba(var(--nx-shade), 0.22);
 
-  /* --- bevels: inset shadows, so they ride on top of the gradient --------- */
-  --sk-bevel: inset 0 1px 0 var(--sk-hi), inset 0 -1px 0 var(--sk-lo);
-  --sk-bevel-strong:
-    inset 0 1px 0 var(--sk-hi),
-    inset 0 -2px 2px rgba(45, 38, 28, 0.13),
-    inset 1px 0 0 var(--sk-hi-soft),
-    inset -1px 0 0 var(--sk-lo);
+  /* --- specular: the bright lip and the rim ------------------------------- */
+  --nx-spec:
+    inset 0 1px 0 rgba(255, 255, 255, 0.92),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  --nx-spec-dark:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07);
 
-  /* --- recess: anything milled INTO its parent --------------------------- */
-  --sk-inset:
-    inset 0 2px 4px rgba(45, 38, 28, 0.22),
-    inset 0 1px 1px rgba(45, 38, 28, 0.3),
-    0 1px 0 var(--sk-hi);
-  --sk-inset-deep:
-    inset 0 3px 8px rgba(20, 16, 10, 0.4),
-    inset 0 1px 2px rgba(20, 16, 10, 0.5),
-    0 1px 0 var(--sk-hi);
+  /* --- recess ------------------------------------------------------------- */
+  --nx-in:
+    inset 0 2px 6px rgba(var(--nx-shade), 0.13),
+    inset 0 1px 1px rgba(var(--nx-shade), 0.1),
+    0 1px 0 rgba(255, 255, 255, 0.85);
+  --nx-in-dark:
+    inset 0 2px 8px rgba(0, 0, 0, 0.5),
+    inset 0 1px 2px rgba(0, 0, 0, 0.6),
+    0 1px 0 rgba(255, 255, 255, 0.07);
 
-  /* --- materials --------------------------------------------------------- */
-  --sk-card: linear-gradient(180deg, #FFFDF9 0%, #F7F4EE 52%, #EFEBE2 100%);
-  --sk-paper: linear-gradient(180deg, #EFEBE3 0%, #E5E0D6 100%);
-  --sk-steel: linear-gradient(180deg, #E4E0D6 0%, #CFC9BC 48%, #BDB6A6 100%);
-  --sk-slate: linear-gradient(180deg, #3A3F46 0%, #272B31 55%, #1C1F23 100%);
-  --sk-accent: linear-gradient(180deg, #4C86E8 0%, #2A5FBE 48%, #1B4596 100%);
-  --sk-accent-press: linear-gradient(180deg, #1B4596 0%, #2A5FBE 60%, #3E74D4 100%);
-  --sk-brass: linear-gradient(180deg, #E6C982 0%, #C9A458 45%, #9C7C36 100%);
-  --sk-glass: linear-gradient(180deg, rgba(247, 244, 238, 0.93) 0%, rgba(240, 236, 228, 0.86) 55%, rgba(233, 229, 221, 0.82) 100%);
-
-  /* Fine grain. Keep it near-invisible — texture you can actually see is
-     texture that dates. feTurbulence is cheap and needs no asset. */
-  --sk-grain: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
-
-  /* Brushed metal: sub-pixel vertical striation. */
-  --sk-brushed: repeating-linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.05) 0px,
-    rgba(255, 255, 255, 0.05) 1px,
-    rgba(0, 0, 0, 0.028) 1px,
-    rgba(0, 0, 0, 0.028) 2px
+  /* --- materials ---------------------------------------------------------- */
+  --nx-glass: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.88) 0%,
+    rgba(255, 255, 255, 0.7) 60%,
+    rgba(255, 255, 255, 0.62) 100%
   );
+  --nx-glass-solid: linear-gradient(180deg, #FFFFFF 0%, #F7F9FD 100%);
+  --nx-acrylic: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.72) 0%,
+    rgba(246, 248, 253, 0.56) 100%
+  );
+  --nx-deep: linear-gradient(180deg, #1B2238 0%, #141A2E 55%, #0F1424 100%);
+  --nx-accent: linear-gradient(180deg, #7AA2FF 0%, #4F7DF3 42%, #3B5BDB 100%);
+  --nx-accent-press: linear-gradient(180deg, #3B5BDB 0%, #4F7DF3 65%, #6B95FF 100%);
 
-  --sk-radius: 10px;
-  --sk-radius-sm: 6px;
-  --sk-radius-lg: 16px;
+  --nx-r-sm: 12px;
+  --nx-r: 18px;
+  --nx-r-lg: 26px;
+  --nx-r-xl: 34px;
 
-  /* Physical easing: mass settles, it does not snap. */
-  --sk-ease: cubic-bezier(0.2, 0.8, 0.3, 1);
-  --sk-ease-press: cubic-bezier(0.4, 0, 0.2, 1);
+  --nx-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --nx-ease-press: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* --- base ----------------------------------------------------------------- */
@@ -107,37 +115,33 @@
 
   body {
     margin: 0;
-    color: var(--color-pw-ink);
+    color: var(--color-nx-ink);
     font-family: var(--font-sans);
     font-size: 17px;
     line-height: 1.6;
-    background-color: var(--color-pw-paper);
-    background-image:
-      radial-gradient(120% 70% at 50% -10%, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0) 60%),
-      var(--sk-paper);
-    /* Deliberately NOT background-attachment: fixed. A fixed background
-       repaints the whole viewport on every scroll frame, and combined with
-       the grain layer and the nav's backdrop-filter it was enough to stall
-       the compositor. The gradient is broad enough that scrolling it costs
-       nothing visually. */
-    background-repeat: no-repeat;
+    letter-spacing: -0.011em;
+    background-color: var(--color-nx-canvas);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: clip;
   }
 
-  /* One grain layer over the whole document rather than per-surface. */
+  /* Ambient light. Three very soft sources behind everything, as plain
+     radial gradients — a blurred element would cost a filter pass, and at
+     this softness the gradient is indistinguishable. Fixed, but painted
+     once: no blend mode and no background-attachment, both of which forced a
+     full-viewport composite on every scroll frame in an earlier pass. */
   body::before {
     content: "";
     position: fixed;
     inset: 0;
-    z-index: 1;
+    z-index: 0;
     pointer-events: none;
-    background-image: var(--sk-grain);
-    /* No mix-blend-mode: blending a fixed full-viewport layer forces a
-       composite of the entire screen every frame. Plain alpha at a lower
-       opacity reads the same and costs nothing. */
-    opacity: 0.09;
+    background-image:
+      radial-gradient(58% 46% at 12% -4%, rgba(99, 102, 241, 0.2) 0%, rgba(99, 102, 241, 0) 72%),
+      radial-gradient(48% 42% at 88% 6%, rgba(56, 189, 248, 0.18) 0%, rgba(56, 189, 248, 0) 72%),
+      radial-gradient(62% 48% at 68% 96%, rgba(139, 92, 246, 0.14) 0%, rgba(139, 92, 246, 0) 74%),
+      linear-gradient(180deg, #F3F6FC 0%, #E8ECF5 100%);
   }
 
   h1, h2, h3, h4, h5, h6, p, figure, blockquote, dl, dd { margin: 0; }
@@ -147,411 +151,358 @@
   button { font: inherit; color: inherit; background: none; border: none; padding: 0; cursor: pointer; }
 
   :focus-visible {
-    outline: 2px solid var(--color-pw-accent-lit);
-    outline-offset: 2px;
-    border-radius: var(--sk-radius-sm);
+    outline: 2px solid var(--color-nx-accent);
+    outline-offset: 3px;
+    border-radius: var(--nx-r-sm);
   }
 
-  ::selection { background-color: rgba(59, 118, 220, 0.3); }
+  ::selection { background-color: rgba(79, 125, 243, 0.22); }
 }
 
 @layer components {
   /* ======================= type ========================================== */
 
-  .sk-display {
-    font-family: var(--font-display);
-    font-size: clamp(40px, 5.4vw, 76px);
-    font-weight: 600;
-    line-height: 1.04;
-    letter-spacing: -0.02em;
-    color: var(--color-pw-ink);
-    /* Engraved: the light edge falls BELOW the stroke. */
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.85), 0 -1px 1px rgba(45, 38, 28, 0.1);
+  /* Modern display type is tight, not engraved. The only "depth" allowed on
+     text is a half-pixel light edge — anything more is the retro look. */
+  .nx-display {
+    font-size: clamp(42px, 5.6vw, 82px);
+    font-weight: 620;
+    line-height: 1.02;
+    letter-spacing: -0.038em;
+    color: var(--color-nx-ink);
   }
 
-  .sk-heading {
-    font-family: var(--font-display);
-    font-size: clamp(26px, 2.8vw, 40px);
+  .nx-heading {
+    font-size: clamp(27px, 3vw, 44px);
     font-weight: 600;
-    line-height: 1.12;
-    letter-spacing: -0.015em;
-    color: var(--color-pw-ink);
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: var(--color-nx-ink);
   }
 
-  .sk-title {
-    font-family: var(--font-sans);
-    font-size: 19px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    color: var(--color-pw-ink);
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
+  .nx-title {
+    font-size: 18px;
+    font-weight: 590;
+    letter-spacing: -0.018em;
+    color: var(--color-nx-ink);
   }
 
-  .sk-body {
-    font-size: 17px;
-    line-height: 1.65;
-    color: var(--color-pw-ink-soft);
-    max-width: 62ch;
+  .nx-body {
+    font-size: 17.5px;
+    line-height: 1.62;
+    letter-spacing: -0.012em;
+    color: var(--color-nx-ink-soft);
+    max-width: 60ch;
   }
 
-  /* Engraved label, as stamped into a plate. */
-  .sk-label {
-    font-family: var(--font-sans);
-    font-size: 11px;
-    font-weight: 600;
+  .nx-label {
+    font-size: 11.5px;
+    font-weight: 560;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--color-pw-ink-faint);
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+    letter-spacing: 0.085em;
+    color: var(--color-nx-ink-faint);
   }
 
-  /* On a dark material the light source flips: shadow goes ABOVE. */
-  .sk-label-dark {
-    color: rgba(255, 255, 255, 0.62);
-    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.7);
-  }
+  .nx-label-dark { color: rgba(255, 255, 255, 0.52); }
 
-  .sk-readout {
+  .nx-readout {
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
     font-weight: 500;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
   }
 
-  /* Numerals on a dark readout, with a faint phosphor bloom. */
-  .sk-readout-lit {
-    color: #EFE6CF;
-    text-shadow: 0 0 12px rgba(224, 192, 120, 0.42), 0 1px 0 rgba(0, 0, 0, 0.55);
+  /* A figure rendered in the accent, with its own bloom. */
+  .nx-lit {
+    color: #AEC6FF;
+    text-shadow: 0 0 20px rgba(122, 162, 255, 0.55);
   }
 
-  .sk-emboss {
-    color: rgba(255, 255, 255, 0.95);
-    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.55), 0 1px 0 rgba(255, 255, 255, 0.14);
+  /* Gradient text, used once or twice and never on body copy. */
+  .nx-grad-text {
+    background-image: linear-gradient(135deg, #1B2238 0%, #3B5BDB 52%, #8B5CF6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 
   /* ======================= surfaces ====================================== */
 
-  .sk-shell {
+  .nx-shell {
     width: 100%;
-    max-width: var(--container-pw-shell);
+    max-width: var(--container-nx-shell);
     margin-inline: auto;
-    padding-inline: 24px;
+    padding-inline: 20px;
   }
 
   @media (min-width: 768px) {
-    .sk-shell { padding-inline: 40px; }
+    .nx-shell { padding-inline: 36px; }
   }
 
-  /* A raised card of warm stock. The workhorse. */
-  .sk-panel {
+  /* The workhorse: a pane of near-solid glass. No backdrop-filter — it is
+     opaque enough not to need one, and a page full of blur layers is what
+     makes this style stutter. Blur is reserved for the nav. */
+  .nx-card {
     position: relative;
-    background-image: var(--sk-card);
-    border-radius: var(--sk-radius);
-    box-shadow: var(--sk-bevel), var(--sk-raise);
+    background-image: var(--nx-glass);
+    border-radius: var(--nx-r-lg);
+    box-shadow: var(--nx-spec), var(--nx-e2);
   }
 
-  .sk-panel-lg {
+  .nx-card-flat {
     position: relative;
-    background-image: var(--sk-card);
-    border-radius: var(--sk-radius-lg);
-    box-shadow: var(--sk-bevel), var(--sk-raise-lg);
+    background-image: var(--nx-acrylic);
+    border-radius: var(--nx-r);
+    box-shadow: var(--nx-spec), var(--nx-e1);
   }
 
-  /* Brushed aluminium. Striation rides on top via ::after. */
-  .sk-metal {
+  /* Lifted clear of the page — the hero's product shot. */
+  .nx-float {
     position: relative;
-    background-image: var(--sk-steel);
-    border-radius: var(--sk-radius);
-    box-shadow: var(--sk-bevel-strong), var(--sk-raise);
+    background-image: var(--nx-glass-solid);
+    border-radius: var(--nx-r-xl);
+    box-shadow: var(--nx-spec), var(--nx-e3);
   }
 
-  .sk-metal::after,
-  .sk-slate::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background-image: var(--sk-brushed);
-    pointer-events: none;
-    opacity: 0.6;
-  }
-
-  .sk-slate {
+  /* Frosted: the one place a backdrop-filter earns its cost. */
+  .nx-frost {
     position: relative;
-    background-image: var(--sk-slate);
-    border-radius: var(--sk-radius);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.14),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.6),
-      var(--sk-raise);
-  }
-
-  /* A well: anything cut INTO its parent. */
-  .sk-well {
-    background-image: linear-gradient(180deg, #E2DDD2 0%, #EDE9E1 100%);
-    border-radius: var(--sk-radius-sm);
-    box-shadow: var(--sk-inset);
-  }
-
-  .sk-well-dark {
-    background-image: linear-gradient(180deg, #14171A 0%, #1F2429 100%);
-    border-radius: var(--sk-radius-sm);
-    box-shadow: var(--sk-inset-deep);
-  }
-
-  .sk-glass {
-    background-image: var(--sk-glass);
-    backdrop-filter: blur(12px) saturate(140%);
-    -webkit-backdrop-filter: blur(12px) saturate(140%);
-    /* Promote to its own layer so the blur is not recomputed against the
-       whole page on every scroll frame. */
-    will-change: backdrop-filter;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.95),
-      inset 0 -1px 0 rgba(45, 38, 28, 0.12),
-      var(--sk-raise-sm);
-  }
-
-  /* A milled groove — the divider. Two 1px lines, dark then light. */
-  .sk-groove {
-    height: 2px;
     background-image: linear-gradient(
       180deg,
-      rgba(45, 38, 28, 0.16) 0 1px,
-      rgba(255, 255, 255, 0.85) 1px 2px
+      rgba(255, 255, 255, 0.72) 0%,
+      rgba(255, 255, 255, 0.55) 100%
+    );
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-radius: var(--nx-r-lg);
+    box-shadow: var(--nx-spec), var(--nx-e2);
+  }
+
+  .nx-dark {
+    position: relative;
+    background-image: var(--nx-deep);
+    border-radius: var(--nx-r-lg);
+    box-shadow: var(--nx-spec-dark), var(--nx-e3);
+  }
+
+  /* Recessed well, light and dark. */
+  .nx-well {
+    background-image: linear-gradient(180deg, rgba(219, 225, 240, 0.85) 0%, rgba(235, 239, 248, 0.7) 100%);
+    border-radius: var(--nx-r-sm);
+    box-shadow: var(--nx-in);
+  }
+
+  .nx-well-dark {
+    background-image: linear-gradient(180deg, #0A0E1B 0%, #121829 100%);
+    border-radius: var(--nx-r-sm);
+    box-shadow: var(--nx-in-dark);
+  }
+
+  /* Hairline. One pixel, tinted, no groove — grooves are the retro idiom. */
+  .nx-line {
+    height: 1px;
+    background-image: linear-gradient(
+      90deg,
+      rgba(18, 26, 56, 0) 0%,
+      rgba(18, 26, 56, 0.1) 12%,
+      rgba(18, 26, 56, 0.1) 88%,
+      rgba(18, 26, 56, 0) 100%
     );
     border: 0;
   }
 
-  .sk-groove-dark {
-    height: 2px;
+  /* Vertical variants: the fade has to run along the other axis. */
+  .nx-line-v {
+    width: 1px;
     background-image: linear-gradient(
       180deg,
-      rgba(0, 0, 0, 0.55) 0 1px,
-      rgba(255, 255, 255, 0.09) 1px 2px
+      rgba(18, 26, 56, 0) 0%,
+      rgba(18, 26, 56, 0.1) 14%,
+      rgba(18, 26, 56, 0.1) 86%,
+      rgba(18, 26, 56, 0) 100%
     );
     border: 0;
   }
 
-  /* ======================= full-bleed bands =============================== */
-
-  /* A shallow recess milled into the page stock. Used to alternate specimen
-     blocks without introducing a second paper colour. */
-  .sk-band-sunk {
-    background-image: linear-gradient(180deg, #E1DCD1 0%, #E8E4DB 14%, #E8E4DB 86%, #DFDAD0 100%);
-    box-shadow:
-      inset 0 3px 6px -3px rgba(45, 38, 28, 0.3),
-      inset 0 -3px 6px -3px rgba(45, 38, 28, 0.22),
-      inset 0 1px 0 rgba(45, 38, 28, 0.12),
-      inset 0 -1px 0 rgba(255, 255, 255, 0.7);
+  .nx-line-v-dark {
+    width: 1px;
+    background-image: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.12) 14%,
+      rgba(255, 255, 255, 0.12) 86%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    border: 0;
   }
 
-  .sk-band-slate {
-    background-image: var(--sk-slate);
-    box-shadow:
-      inset 0 2px 5px rgba(0, 0, 0, 0.55),
-      inset 0 1px 0 rgba(255, 255, 255, 0.11),
-      inset 0 -1px 0 rgba(255, 255, 255, 0.07);
+  .nx-line-dark {
+    height: 1px;
+    background-image: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.1) 12%,
+      rgba(255, 255, 255, 0.1) 88%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    border: 0;
   }
 
-  .sk-band-slate::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background-image: var(--sk-brushed);
-    /* Far lower than on a small part: the same striation that reads as
-       brushed metal on a 300px panel reads as corduroy across a full band. */
-    opacity: 0.22;
-  }
+  /* ======================= bands ========================================= */
 
-  /* Blue enamel. The base is nearly flat — a full-height gradient across a
-     band this tall reads as a SaaS hero, not as paint. The gloss is confined
-     to the top ~170px, which is where a highlight would actually fall. */
-  .sk-band-accent {
+  .nx-band-dark {
     background-image:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0px, rgba(255, 255, 255, 0.06) 90px, rgba(255, 255, 255, 0) 175px),
-      linear-gradient(180deg, #2E63C4 0%, #27559F 100%);
-    box-shadow:
-      inset 0 2px 5px rgba(10, 25, 60, 0.45),
-      inset 0 1px 0 rgba(255, 255, 255, 0.33),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+      radial-gradient(70% 120% at 20% 0%, rgba(79, 125, 243, 0.24) 0%, rgba(79, 125, 243, 0) 68%),
+      radial-gradient(60% 110% at 88% 100%, rgba(139, 92, 246, 0.2) 0%, rgba(139, 92, 246, 0) 70%),
+      var(--nx-deep);
+  }
+
+  .nx-band-accent {
+    background-image:
+      radial-gradient(60% 130% at 78% 8%, rgba(168, 196, 255, 0.34) 0%, rgba(168, 196, 255, 0) 66%),
+      linear-gradient(160deg, #5A86F5 0%, #3B5BDB 52%, #3247B8 100%);
   }
 
   /* ======================= controls ====================================== */
 
-  .sk-btn {
+  .nx-btn {
     position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 9px;
-    border-radius: var(--sk-radius);
+    gap: 8px;
+    border-radius: 999px;
     font-family: var(--font-sans);
-    font-weight: 600;
-    letter-spacing: -0.005em;
+    font-weight: 580;
+    letter-spacing: -0.014em;
     white-space: nowrap;
     transition:
-      transform 90ms var(--sk-ease-press),
-      box-shadow 90ms var(--sk-ease-press),
-      filter 140ms var(--sk-ease);
+      transform 130ms var(--nx-ease),
+      box-shadow 130ms var(--nx-ease),
+      filter 160ms var(--nx-ease);
   }
 
-  .sk-btn-primary {
-    background-image: var(--sk-accent);
+  .nx-btn-primary {
+    background-image: var(--nx-accent);
     color: #fff;
-    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.35);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.45),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.3),
-      0 1px 1px rgba(20, 35, 70, 0.3),
-      0 5px 14px rgba(20, 40, 90, 0.3);
+      inset 0 1px 0 rgba(255, 255, 255, 0.55),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.18),
+      0 1px 2px rgba(35, 52, 130, 0.3),
+      0 10px 24px -8px rgba(59, 91, 219, 0.62),
+      0 2px 8px -2px rgba(59, 91, 219, 0.4);
   }
 
-  .sk-btn-primary:hover { filter: brightness(1.07); }
-
-  .sk-btn-primary:active {
-    background-image: var(--sk-accent-press);
-    transform: translateY(1px);
+  .nx-btn-primary:hover {
+    transform: translateY(-1px);
     box-shadow:
-      inset 0 2px 5px rgba(10, 25, 60, 0.55),
-      inset 0 1px 0 rgba(0, 0, 0, 0.18),
-      0 1px 0 rgba(255, 255, 255, 0.4);
+      inset 0 1px 0 rgba(255, 255, 255, 0.6),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.2),
+      0 1px 2px rgba(35, 52, 130, 0.28),
+      0 16px 34px -10px rgba(59, 91, 219, 0.7),
+      0 3px 10px -2px rgba(59, 91, 219, 0.45);
   }
 
-  .sk-btn-secondary {
-    background-image: linear-gradient(180deg, #FFFDF9 0%, #EEEAE1 100%);
-    color: var(--color-pw-ink);
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+  .nx-btn-primary:active {
+    background-image: var(--nx-accent-press);
+    transform: translateY(0.5px);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.95),
-      inset 0 -1px 0 rgba(45, 38, 28, 0.16),
-      inset 0 0 0 1px rgba(45, 38, 28, 0.1),
-      var(--sk-raise-sm);
+      inset 0 2px 6px rgba(20, 34, 96, 0.5),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+      0 1px 2px rgba(35, 52, 130, 0.2);
   }
 
-  .sk-btn-secondary:hover { filter: brightness(1.02); }
-
-  .sk-btn-secondary:active {
-    transform: translateY(1px);
-    box-shadow:
-      inset 0 2px 4px rgba(45, 38, 28, 0.26),
-      inset 0 0 0 1px rgba(45, 38, 28, 0.12);
+  .nx-btn-secondary {
+    background-image: var(--nx-glass);
+    color: var(--color-nx-ink);
+    box-shadow: var(--nx-spec), var(--nx-e1);
   }
 
-  /* A physical chip that can be on or off. */
-  .sk-chip {
+  .nx-btn-secondary:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--nx-spec), var(--nx-e2);
+  }
+
+  .nx-btn-secondary:active {
+    transform: translateY(0.5px);
+    box-shadow:
+      inset 0 2px 5px rgba(var(--nx-shade), 0.16),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  }
+
+  /* Chips carry state in light, not in depth: an active chip glows. */
+  .nx-chip {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    padding: 6px 12px;
+    gap: 6px;
+    padding: 7px 13px;
     border-radius: 999px;
-    font-size: 12.5px;
-    font-weight: 500;
-    background-image: linear-gradient(180deg, #F6F3EC 0%, #E7E2D8 100%);
-    color: var(--color-pw-ink-soft);
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.9),
-      inset 0 0 0 1px rgba(45, 38, 28, 0.09),
-      0 1px 2px rgba(45, 38, 28, 0.1);
+    font-size: 13px;
+    font-weight: 520;
+    letter-spacing: -0.012em;
+    transition: transform 130ms var(--nx-ease), box-shadow 130ms var(--nx-ease);
   }
 
-  .sk-chip-on {
-    background-image: var(--sk-accent);
+  .nx-chip-on {
+    background-image: var(--nx-accent);
     color: #fff;
-    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.4),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.25),
-      0 1px 3px rgba(20, 40, 90, 0.35);
+      inset 0 1px 0 rgba(255, 255, 255, 0.45),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+      0 1px 2px rgba(35, 52, 130, 0.22),
+      0 6px 16px -6px rgba(59, 91, 219, 0.6);
   }
 
-  .sk-chip-off {
-    background-image: linear-gradient(180deg, #E8E4DA 0%, #DDD8CC 100%);
-    color: var(--color-pw-ink-faint);
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+  .nx-chip-off {
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(245, 247, 252, 0.4) 100%);
+    color: var(--color-nx-ink-faint);
     box-shadow:
-      inset 0 1px 3px rgba(45, 38, 28, 0.16),
-      inset 0 0 0 1px rgba(45, 38, 28, 0.07);
+      inset 0 0 0 1px rgba(18, 26, 56, 0.07),
+      0 1px 1px rgba(var(--nx-shade), 0.04);
   }
 
-  /* Indicator lamp. */
-  .sk-led {
-    width: 9px;
-    height: 9px;
+  /* Small status dot with a bloom. */
+  .nx-dot {
+    width: 8px;
+    height: 8px;
     border-radius: 999px;
-    background-image: radial-gradient(circle at 34% 30%, #7FE39A 0%, #34A85A 54%, #1C7038 100%);
+    background-image: linear-gradient(180deg, #6EE7A8 0%, #22C07A 100%);
     box-shadow:
-      0 0 7px rgba(52, 200, 110, 0.75),
-      inset 0 1px 0 rgba(255, 255, 255, 0.6),
-      inset 0 -1px 1px rgba(0, 0, 0, 0.35);
+      0 0 10px rgba(34, 192, 122, 0.8),
+      inset 0 1px 0 rgba(255, 255, 255, 0.55);
   }
 
-  .sk-led-amber {
-    background-image: radial-gradient(circle at 34% 30%, #FFD98A 0%, #D99A29 54%, #8F6415 100%);
+  .nx-dot-accent {
+    background-image: linear-gradient(180deg, #9CBCFF 0%, #4F7DF3 100%);
     box-shadow:
-      0 0 7px rgba(217, 154, 41, 0.7),
-      inset 0 1px 0 rgba(255, 255, 255, 0.55),
-      inset 0 -1px 1px rgba(0, 0, 0, 0.35);
-  }
-
-  /* Brass plaque, for the few places carrying a stamped mark. */
-  .sk-brass {
-    background-image: var(--sk-brass);
-    border-radius: var(--sk-radius-sm);
-    color: #3A2B0C;
-    text-shadow: 0 1px 0 rgba(255, 240, 200, 0.55);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 246, 214, 0.75),
-      inset 0 -1px 0 rgba(70, 50, 10, 0.5),
-      var(--sk-raise-sm);
-  }
-
-  /* A screw head. Heaviest hardware only — two per panel, never four. */
-  .sk-screw {
-    width: 11px;
-    height: 11px;
-    border-radius: 999px;
-    background-image:
-      linear-gradient(180deg, rgba(0, 0, 0, 0.42) 0 1px, rgba(255, 255, 255, 0) 1px),
-      radial-gradient(circle at 36% 30%, #F0EDE5 0%, #BDB7A9 62%, #948E80 100%);
-    box-shadow:
-      inset 0 -1px 1px rgba(255, 255, 255, 0.5),
-      inset 0 1px 2px rgba(0, 0, 0, 0.35),
-      0 1px 0 rgba(255, 255, 255, 0.6);
+      0 0 10px rgba(79, 125, 243, 0.85),
+      inset 0 1px 0 rgba(255, 255, 255, 0.55);
   }
 }
 
 /* ======================= voice capture ================================== */
 
-/* Bars are sized statically from the fixture, so the reduced-motion and
-   pre-hydration state is the correct static image; the animation only scales
-   them. transform-box makes transform-origin resolve against the rect. */
-.sk-wave-bar {
+.nx-wave-bar {
   transform-box: fill-box;
   transform-origin: 50% 50%;
 }
 
-/* Stepped, not eased: the meter ticks like hardware. Declared only where
-   motion is welcome, so the reduce branch has nothing to cancel. */
 @media (prefers-reduced-motion: no-preference) {
-  .sk-wave-bar {
-    animation: sk-wave 1100ms steps(3, end) infinite alternate;
+  .nx-wave-bar {
+    animation: nx-wave 1400ms cubic-bezier(0.4, 0, 0.5, 1) infinite alternate;
   }
 
-  .sk-caret {
-    animation: sk-caret 1000ms steps(1, end) infinite;
+  .nx-caret {
+    animation: nx-caret 1100ms steps(1, end) infinite;
   }
 }
 
-@keyframes sk-wave {
-  from { transform: scaleY(0.3); }
+@keyframes nx-wave {
+  from { transform: scaleY(0.26); }
   to   { transform: scaleY(1); }
 }
 
-@keyframes sk-caret {
+@keyframes nx-caret {
   0%, 49%   { opacity: 1; }
   50%, 100% { opacity: 0; }
 }

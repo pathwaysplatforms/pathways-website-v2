@@ -1,31 +1,32 @@
 type RuleProps = {
   orientation?: "horizontal" | "vertical";
-  /** "light" grooves into a pale material, "dark" into slate or enamel. */
   tone?: "light" | "dark";
   className?: string;
 };
 
+const BASE: Record<string, string> = {
+  "horizontal-light": "nx-line w-full",
+  "horizontal-dark": "nx-line-dark w-full",
+  "vertical-light": "nx-line-v",
+  "vertical-dark": "nx-line-v-dark",
+};
+
 /**
- * A milled groove, not a line: one dark pixel with one light pixel beneath
- * it, so the divider reads as a channel cut into the surface. On a dark
- * material the order flips.
+ * A hairline that fades out at both ends, so a divider inside a rounded
+ * surface never collides with the corner radius. The fade has to run along
+ * the divider's own axis, which is why vertical is a separate rule rather
+ * than the horizontal one rotated.
  */
 export function Rule({
   orientation = "horizontal",
   tone = "light",
   className = "",
 }: RuleProps) {
-  const base = tone === "light" ? "sk-groove" : "sk-groove-dark";
-  const axis =
-    orientation === "horizontal"
-      ? "w-full"
-      : "h-auto w-[2px] self-stretch rotate-180 [writing-mode:vertical-lr]";
-
   return (
     <div
       role="presentation"
       aria-hidden="true"
-      className={`${base} ${axis} ${className}`}
+      className={`${BASE[`${orientation}-${tone}`]} ${className}`}
     />
   );
 }

@@ -18,11 +18,11 @@ type VoiceWaveformProps = {
 
 const VIEW_W = 520;
 const VIEW_H = 92;
-const BAR_W = 7;
+const BAR_W = 6;
 /** Even a silent frame keeps a mark on the baseline. */
 const MIN_H = 3;
-/** One full round trip of the 1100ms alternate keyframe. */
-const CYCLE = 2200;
+/** One full round trip of the 1400ms alternate keyframe. */
+const CYCLE = 2800;
 /** Prime, coprime with CYCLE: no two bars in the field share a phase. */
 const STRIDE = 137;
 
@@ -47,22 +47,21 @@ export function VoiceWaveform({
 
   return (
     <Frame
-      variant="device"
       label="Voice capture"
       note={EXAMPLE_PROFILE}
-      lamp="amber"
+      dot="accent"
       className={className}
     >
       <div className="flex items-center justify-between gap-4">
         <span className="flex items-center gap-2">
-          <Mic size={14} strokeWidth={2.5} aria-hidden="true" className="text-pw-ink-faint" />
+          <Mic size={14} strokeWidth={2.5} aria-hidden="true" className="text-nx-ink-faint" />
           <MonoLabel tone="dim">Recording</MonoLabel>
         </span>
-        <span className="sk-readout text-[13px] text-pw-ink-soft">00:04</span>
+        <span className="nx-readout text-[13px] text-nx-ink-soft">00:04</span>
       </div>
 
       {/* The meter, sunk into the face. */}
-      <div className="sk-well-dark mt-3 px-4 py-3">
+      <div className="nx-well-dark mt-3 px-4 py-3">
         <svg
           aria-hidden="true"
           focusable="false"
@@ -76,7 +75,7 @@ export function VoiceWaveform({
             y1={VIEW_H / 2}
             x2={VIEW_W}
             y2={VIEW_H / 2}
-            stroke="rgba(255,255,255,0.1)"
+            stroke="rgba(255,255,255,0.08)"
             strokeWidth={1}
           />
           {bars.map((value, index) => {
@@ -85,17 +84,17 @@ export function VoiceWaveform({
             return (
               <rect
                 key={index}
-                className="sk-wave-bar"
+                className="nx-wave-bar"
                 x={index * step + (step - BAR_W) / 2}
                 y={(VIEW_H - height) / 2}
                 width={BAR_W}
                 height={height}
-                rx={1.5}
-                fill={isAccent ? "#5C93EE" : "rgba(233,229,221,0.5)"}
+                rx={3}
+                fill={isAccent ? "#7AA2FF" : "rgba(174,198,255,0.32)"}
                 style={{
                   animationDelay: `-${(index * STRIDE) % CYCLE}ms`,
                   filter: isAccent
-                    ? "drop-shadow(0 0 5px rgba(92,147,238,0.75))"
+                    ? "drop-shadow(0 0 7px rgba(122,162,255,0.85))"
                     : undefined,
                 }}
               />
@@ -106,11 +105,11 @@ export function VoiceWaveform({
 
       <div className="mt-4">
         <MonoLabel tone="dim">Transcript</MonoLabel>
-        <p className="mt-2 text-[14.5px] leading-relaxed text-pw-ink-soft">
+        <p className="mt-2 text-[14.5px] leading-relaxed text-nx-ink-soft">
           {transcript}
           <span
             aria-hidden="true"
-            className="sk-caret ml-1 inline-block h-[1em] w-[0.42em] translate-y-[0.14em] rounded-[1px] bg-pw-accent align-baseline"
+            className="nx-caret ml-1 inline-block h-[1em] w-[0.42em] translate-y-[0.14em] rounded-[1px] bg-nx-accent align-baseline"
           />
         </p>
       </div>

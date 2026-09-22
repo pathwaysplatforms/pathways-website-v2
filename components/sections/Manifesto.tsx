@@ -1,51 +1,50 @@
-import { Check } from "lucide-react";
+import { FileText, RefreshCw, HelpCircle } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 import { MonoLabel } from "@/components/ui/MonoLabel";
 import { Section } from "@/components/ui/Section";
 import { MANIFESTO } from "@/lib/fixtures";
 
+/** One glyph per statement, in fixture order. */
+const ICONS: readonly LucideIcon[] = [FileText, RefreshCw, HelpCircle];
+
 /**
- * Three statements, engraved into a single brushed plate rather than set as
- * three cards. The plate is one object; the grooves between the statements
- * are milled into it, which is why they run edge to edge.
+ * Three statements, each on its own pane. Laid out as three columns rather
+ * than one tall panel: the previous version left a lot of dead space around a
+ * single block, and three panes give the ambient light something to fall on.
  */
 export function Manifesto() {
   return (
     <Section
       id="manifesto"
-      bg="sunk"
-      topRule
+      grid
+      innerClassName="gap-y-10"
       aria-label="How Pathways handles information"
     >
-      <div className="sk-panel-lg relative mx-auto max-w-[900px] overflow-hidden">
-        <div className="flex items-center gap-3 bg-[linear-gradient(180deg,#FFFDF9_0%,#F2EFE7_100%)] px-6 py-4">
-          <span aria-hidden="true" className="sk-screw shrink-0" />
-          <MonoLabel>How this works</MonoLabel>
-          <span aria-hidden="true" className="sk-screw ml-auto shrink-0" />
-        </div>
-        <div aria-hidden="true" className="sk-groove" />
-
-        <ol>
-          {MANIFESTO.map((statement, index) => (
-            <li key={statement}>
-              {index > 0 ? (
-                <div aria-hidden="true" className="sk-groove" />
-              ) : null}
-              <div className="flex items-center gap-5 px-6 py-7 md:gap-7 md:px-10 md:py-9">
-                <span
-                  aria-hidden="true"
-                  className="sk-well flex h-11 w-11 shrink-0 items-center justify-center text-pw-accent"
-                >
-                  <Check size={20} strokeWidth={2.75} />
-                </span>
-                <p className="font-display text-[clamp(21px,2.4vw,32px)] leading-[1.15] font-semibold tracking-[-0.015em] text-pw-ink [text-shadow:0_1px_0_rgba(255,255,255,0.85)]">
-                  {statement}
-                </p>
-              </div>
-            </li>
-          ))}
-        </ol>
+      <div className="col-span-4 md:col-span-12">
+        <MonoLabel>How this works</MonoLabel>
       </div>
+
+      {MANIFESTO.map((statement, index) => {
+        const Icon = ICONS[index] ?? FileText;
+
+        return (
+          <div
+            key={statement}
+            className="nx-card col-span-4 flex flex-col gap-5 p-7 md:p-8"
+          >
+            <span
+              aria-hidden="true"
+              className="nx-well flex h-12 w-12 items-center justify-center !rounded-2xl text-nx-accent"
+            >
+              <Icon size={21} strokeWidth={2} />
+            </span>
+            <p className="text-[21px] leading-[1.25] font-semibold tracking-[-0.028em] text-nx-ink md:text-[23px]">
+              {statement}
+            </p>
+          </div>
+        );
+      })}
     </Section>
   );
 }

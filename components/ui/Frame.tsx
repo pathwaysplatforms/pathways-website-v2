@@ -1,103 +1,72 @@
 import type { ReactNode } from "react";
 
+import { MonoLabel } from "@/components/ui/MonoLabel";
+
 type FrameProps = {
   children: ReactNode;
-  /** Engraved label in the frame's header rail, left side. */
   label?: string;
   /**
-   * Right side of the rail. Every mock showing a figure passes
+   * Right side of the header. Every mock showing a figure passes
    * "Example profile" here — illustrative numbers are never presented as
    * real thresholds.
    */
   note?: string;
   /**
-   * "panel" — warm card stock (default)
-   * "device" — a hardware enclosure: darker rail, screws, deeper shadow
+   * "card"  — a pane of glass (default)
+   * "float" — lifted clear of the page, for the hero
    */
-  variant?: "panel" | "device";
-  /** Small lamp in the rail, for mocks that depict a live state. */
-  lamp?: "none" | "green" | "amber";
+  variant?: "card" | "float";
+  /** A status dot in the header, for mocks depicting a live state. */
+  dot?: "none" | "green" | "accent";
   className?: string;
   bodyClassName?: string;
 };
 
 /**
- * The enclosure every product mock sits in.
+ * The pane every product mock sits in.
  *
- * The rail is separated from the body by a milled groove rather than a
- * border, so the header reads as a machined lip rather than a div with a
- * line under it. The "device" variant adds two screw heads — two, never
- * four, which is the difference between hardware and costume.
+ * The header is divided from the body by a fading hairline rather than a
+ * groove — grooves are the retro idiom. Padding is generous; tight padding is
+ * what makes a soft-shadow surface look like a cheap widget.
  */
 export function Frame({
   children,
   label,
   note,
-  variant = "panel",
-  lamp = "none",
+  variant = "card",
+  dot = "none",
   className = "",
   bodyClassName = "",
 }: FrameProps) {
-  const hasRail = label !== undefined || note !== undefined || lamp !== "none";
-  const isDevice = variant === "device";
+  const hasHeader = label !== undefined || note !== undefined || dot !== "none";
 
   return (
     <div
       className={[
-        isDevice ? "sk-metal" : "sk-panel",
+        variant === "float" ? "nx-float" : "nx-card",
         "overflow-hidden",
         className,
       ].join(" ")}
     >
-      {hasRail ? (
-        <div className="relative">
-          <div
-            className={[
-              "flex items-center gap-3 px-4 py-3",
-              isDevice
-                ? "bg-[linear-gradient(180deg,#E9E5DB_0%,#D8D3C6_100%)]"
-                : "bg-[linear-gradient(180deg,#FFFDF9_0%,#F2EFE7_100%)]",
-            ].join(" ")}
-          >
-            {isDevice ? (
-              <span aria-hidden="true" className="sk-screw shrink-0" />
-            ) : null}
-
-            {lamp !== "none" ? (
+      {hasHeader ? (
+        <>
+          <div className="flex items-center gap-2.5 px-5 pt-4 pb-3.5 md:px-6">
+            {dot !== "none" ? (
               <span
                 aria-hidden="true"
-                className={`sk-led shrink-0 ${lamp === "amber" ? "sk-led-amber" : ""}`}
+                className={`nx-dot shrink-0 ${dot === "accent" ? "nx-dot-accent" : ""}`}
               />
             ) : null}
-
-            {label !== undefined ? (
-              <span className="sk-label">{label}</span>
+            {label !== undefined ? <MonoLabel>{label}</MonoLabel> : null}
+            {note !== undefined ? (
+              <MonoLabel className="ml-auto opacity-70">{note}</MonoLabel>
             ) : null}
-
-            <span className="ml-auto flex items-center gap-3">
-              {note !== undefined ? (
-                <span className="sk-label opacity-80">{note}</span>
-              ) : null}
-              {isDevice ? (
-                <span aria-hidden="true" className="sk-screw shrink-0" />
-              ) : null}
-            </span>
           </div>
-          <div aria-hidden="true" className="sk-groove" />
-        </div>
+          <div aria-hidden="true" className="nx-line" />
+        </>
       ) : null}
 
-      <div
-        className={[
-          "relative p-4 md:p-6",
-          isDevice
-            ? "bg-[linear-gradient(180deg,#FBF9F5_0%,#F1EEE6_100%)]"
-            : "",
-          bodyClassName,
-        ].join(" ")}
-      >
-        {children}
-      </div>
+      <div className={`relative p-5 md:p-6 ${bodyClassName}`}>{children}</div>
     </div>
   );
 }

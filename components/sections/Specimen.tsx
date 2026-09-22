@@ -8,79 +8,65 @@ import { EXAMPLE_PROFILE, type Specimen as SpecimenData } from "@/lib/fixtures";
 type SpecimenProps = {
   specimen: SpecimenData;
   mock: ReactNode;
-  /** Alternates down the run so no two neighbouring blocks share a surface. */
-  bg?: "paper" | "sunk";
+  /** The leading specimen lights its numeral; the rest stay quiet. */
+  lit?: boolean;
 };
 
-/** Desktop column spans per composition. Mobile always stacks on 4 columns. */
-const SPAN: Record<
-  SpecimenData["layout"],
-  { text: string; mock: string; order: string }
-> = {
+const SPAN: Record<SpecimenData["layout"], { text: string; mock: string }> = {
   "text-mock": {
     text: "col-span-4 md:col-span-5",
     mock: "col-span-4 md:col-span-7",
-    order: "",
   },
   "mock-text": {
     text: "col-span-4 md:col-span-4 md:order-1",
     mock: "col-span-4 md:col-span-8 md:order-2",
-    order: "md:[&>*:first-child]:order-2",
   },
   stacked: {
     text: "col-span-4 md:col-span-12",
     mock: "col-span-4 md:col-span-12",
-    order: "",
   },
 };
 
 /**
- * One specimen block: a numbered plate, the claim, one sentence, and the
- * product enclosure it refers to.
+ * One specimen block: an index, the claim, one sentence, and the pane the
+ * claim refers to.
  *
- * DOM order is always text-then-mock so the reading order on a phone and in a
+ * DOM order is always text-then-mock so reading order on a phone and in a
  * screen reader matches the page; "mock-text" only reorders visually.
  */
-export function Specimen({ specimen, mock, bg = "paper" }: SpecimenProps) {
+export function Specimen({ specimen, mock, lit = false }: SpecimenProps) {
   const span = SPAN[specimen.layout];
   const isStacked = specimen.layout === "stacked";
 
   return (
     <Section
       id={`specimen-${specimen.id}`}
-      bg={bg}
-      topRule={bg === "paper"}
       grid
-      innerClassName="items-center gap-y-10"
+      innerClassName="items-center gap-y-12"
       aria-labelledby={`specimen-${specimen.id}-heading`}
     >
-      <div className={`${span.text} ${isStacked ? "max-w-[46ch]" : ""}`}>
-        <div className="flex items-center gap-4">
-          <Numeral value={specimen.numeral} />
-          <span className="flex flex-col gap-1">
-            <MonoLabel>{specimen.label}</MonoLabel>
-            {specimen.headlineIsExample ? (
-              <MonoLabel tone="dim" className="!text-[10px]">
-                {EXAMPLE_PROFILE}
-              </MonoLabel>
-            ) : null}
-          </span>
+      <div className={`${span.text} ${isStacked ? "max-w-[44ch]" : ""}`}>
+        <div className="flex flex-wrap items-center gap-3">
+          <Numeral value={specimen.numeral} variant={lit ? "accent" : "glass"} />
+          <MonoLabel>{specimen.label}</MonoLabel>
+          {specimen.headlineIsExample ? (
+            <MonoLabel className="nx-card-flat !rounded-full px-2.5 py-1 !text-[10px]">
+              {EXAMPLE_PROFILE}
+            </MonoLabel>
+          ) : null}
         </div>
 
-        <h2
-          id={`specimen-${specimen.id}-heading`}
-          className="sk-heading mt-6"
-        >
+        <h2 id={`specimen-${specimen.id}-heading`} className="nx-heading mt-6">
           {specimen.headline}
         </h2>
 
         {specimen.caption !== undefined ? (
           <p className="mt-3">
-            <MonoLabel tone="dim">{specimen.caption}</MonoLabel>
+            <MonoLabel>{specimen.caption}</MonoLabel>
           </p>
         ) : null}
 
-        <p className="sk-body mt-4">{specimen.body}</p>
+        <p className="nx-body mt-5">{specimen.body}</p>
       </div>
 
       <div className={span.mock}>{mock}</div>

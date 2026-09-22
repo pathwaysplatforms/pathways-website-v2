@@ -1,20 +1,20 @@
-import { Check, X } from "lucide-react";
+import { Check } from "lucide-react";
 
 import type { Pathway } from "@/lib/fixtures";
 
 type PathwayChipProps = {
   name: string;
-  /** "eliminated" (default) sits recessed; "matched" sits proud and lit. */
   status?: Pathway["status"];
   className?: string;
 };
 
 /**
- * One pathway in the funnel, as a physical tab.
+ * One pathway as a pill.
  *
- * A matched pathway is a raised enamel tab with a tick; an eliminated one is
- * pressed INTO the surface and dimmed. The state is carried by the depth, not
- * only by the colour — that is the whole argument for doing this in relief.
+ * A matched pathway is lit — accent fill with a coloured glow under it. An
+ * eliminated one is quiet glass with a hairline rim. The state is carried by
+ * light rather than by depth, which is the whole difference between this and
+ * the extruded version.
  */
 export function PathwayChip({
   name,
@@ -26,16 +26,14 @@ export function PathwayChip({
   return (
     <span
       className={[
-        "sk-chip",
-        isMatched ? "sk-chip-on" : "sk-chip-off",
+        "nx-chip",
+        isMatched ? "nx-chip-on" : "nx-chip-off",
         className,
       ].join(" ")}
     >
       {isMatched ? (
-        <Check size={13} strokeWidth={3} aria-hidden="true" />
-      ) : (
-        <X size={12} strokeWidth={2.5} aria-hidden="true" className="opacity-55" />
-      )}
+        <Check size={13} strokeWidth={2.75} aria-hidden="true" />
+      ) : null}
       {name}
     </span>
   );

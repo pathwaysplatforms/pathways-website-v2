@@ -1,36 +1,31 @@
 type NumeralProps = {
-  /** "01".."05". A specimen number, not a count. */
   value: string;
-  /**
-   * "brass" — a stamped plaque (default)
-   * "steel" — a machined disc, for darker surroundings
-   */
-  variant?: "brass" | "steel";
+  /** "glass" is a pale pane; "accent" is the lit one. */
+  variant?: "glass" | "accent";
   className?: string;
 };
 
 /**
- * The specimen number, as a physical tag fixed to the block. Centred inside
- * its own plate — the one place centred text is right, because the plate is
- * the thing being centred in, not the page.
+ * The specimen number, on its own small pane. Set in mono so it reads as an
+ * index rather than a heading.
  */
 export function Numeral({
   value,
-  variant = "brass",
+  variant = "glass",
   className = "",
 }: NumeralProps) {
   const surface =
-    variant === "brass"
-      ? "sk-brass"
-      : "sk-metal text-pw-ink [text-shadow:0_1px_0_rgba(255,255,255,0.85)]";
+    variant === "accent"
+      ? "nx-chip-on"
+      : "nx-card-flat text-nx-ink-faint";
 
   return (
     <span
       aria-hidden="true"
       className={[
         surface,
-        "inline-flex h-12 w-12 shrink-0 items-center justify-center",
-        "font-mono text-[17px] font-medium tabular-nums tracking-tight",
+        "nx-readout inline-flex h-10 items-center justify-center px-3.5",
+        "text-[14px] !rounded-full",
         className,
       ].join(" ")}
     >

@@ -1,4 +1,4 @@
-import { ArrowRight, ShieldCheck } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 
 import { MissionControlCard } from "@/components/product/MissionControlCard";
 import { Button } from "@/components/ui/Button";
@@ -6,47 +6,42 @@ import { MonoLabel } from "@/components/ui/MonoLabel";
 import { HERO, SITE } from "@/lib/fixtures";
 
 /**
- * The hero is a static composition — there is no pinned scroll sequence and
- * nothing appears on scroll. The product does the talking: a real enclosure,
- * sitting on the page with a contact shadow, tilted very slightly so it reads
- * as an object photographed on a desk rather than a screenshot pasted flat.
+ * A static hero — nothing here appears on scroll and nothing pins.
  *
- * Server Component. Nothing on this page needs client JavaScript.
+ * The depth comes from one lifted pane of glass carrying the product, sitting
+ * in the page's ambient light with a coloured shadow under it. Server
+ * Component; the whole site ships no client JavaScript.
  */
 export function Hero() {
   return (
     <header
       aria-labelledby="hero-heading"
-      className="relative overflow-x-clip pt-14 pb-20 md:pt-20 md:pb-28"
+      className="relative overflow-x-clip pt-16 pb-24 md:pt-24 md:pb-32"
     >
-      {/* The light. A broad soft source above and behind the panel, plus a
-          warm bounce at the bottom so the page does not fall off into grey. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_55%_at_62%_0%,rgba(255,255,255,0.95)_0%,rgba(255,255,255,0)_70%),radial-gradient(50%_40%_at_10%_100%,rgba(214,196,160,0.28)_0%,rgba(214,196,160,0)_70%)]"
-      />
-
-      <div className="sk-shell relative grid grid-cols-4 items-center gap-x-6 gap-y-14 md:grid-cols-12">
-        <div className="col-span-4 md:col-span-6 lg:col-span-6">
-          <span className="sk-brass inline-flex items-center gap-2 px-3 py-1.5">
-            <ShieldCheck size={13} strokeWidth={2.5} aria-hidden="true" />
-            <MonoLabel className="!text-[#3A2B0C] !opacity-100 [text-shadow:0_1px_0_rgba(255,240,200,0.55)]">
-              {HERO.kicker}
-            </MonoLabel>
+      <div className="nx-shell relative grid grid-cols-4 items-center gap-x-6 gap-y-16 md:grid-cols-12">
+        <div className="col-span-4 md:col-span-6">
+          <span className="nx-card-flat inline-flex items-center gap-2 rounded-full px-3.5 py-2">
+            <Sparkles
+              size={13}
+              strokeWidth={2.25}
+              aria-hidden="true"
+              className="text-nx-accent"
+            />
+            <MonoLabel>{HERO.kicker}</MonoLabel>
           </span>
 
-          <h1 id="hero-heading" className="sk-display mt-6 max-w-[14ch]">
+          <h1 id="hero-heading" className="nx-display mt-7 max-w-[15ch]">
             {HERO.headline}
           </h1>
 
-          <p className="sk-body mt-6 max-w-[54ch]">{HERO.body}</p>
+          <p className="nx-body mt-7 max-w-[52ch]">{HERO.body}</p>
 
-          <div className="mt-9 flex flex-wrap items-center gap-3">
+          <div className="mt-10 flex flex-wrap items-center gap-3">
             <Button
               href={SITE.appUrl}
               variant="primary"
               size="lg"
-              trailing={<ArrowRight size={17} strokeWidth={2.5} />}
+              trailing={<ArrowRight size={17} strokeWidth={2.25} />}
             >
               Try it out
             </Button>
@@ -56,18 +51,15 @@ export function Hero() {
           </div>
         </div>
 
-        {/* The product shot. */}
-        <div className="col-span-4 md:col-span-6 lg:col-span-6">
-          <div className="relative mx-auto w-full max-w-[520px] [perspective:1600px]">
-            {/* Contact shadow on the desk, separate from the panel's own
-                ambient shadow — a single shadow always reads as a sticker. */}
+        <div className="col-span-4 md:col-span-6">
+          <div className="relative mx-auto w-full max-w-[540px]">
+            {/* A coloured pool of light under the pane, separate from its own
+                ambient shadow. One shadow alone reads as a flat sticker. */}
             <div
               aria-hidden="true"
-              className="absolute inset-x-10 bottom-[-26px] h-12 rounded-[999px] bg-[radial-gradient(ellipse_at_center,rgba(45,38,28,0.34)_0%,rgba(45,38,28,0)_72%)] blur-[6px]"
+              className="absolute inset-x-6 -bottom-8 h-16 rounded-[999px] bg-[radial-gradient(ellipse_at_center,rgba(59,91,219,0.28)_0%,rgba(59,91,219,0)_72%)]"
             />
-            <div className="relative [transform:rotateY(-7deg)_rotateX(2deg)]">
-              <MissionControlCard />
-            </div>
+            <MissionControlCard floating />
           </div>
         </div>
       </div>

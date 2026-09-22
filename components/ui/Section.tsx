@@ -5,17 +5,14 @@ type SectionProps = {
   children: ReactNode;
   as?: ElementType;
   /**
-   * The material the band is made of.
-   *   "paper" — nothing; the document's own stock shows through (default)
-   *   "sunk"  — a shallow recess milled into the paper, for alternation
-   *   "slate" — dark brushed metal, for instrument readouts
-   *   "accent"— the blue enamel block
+   * "canvas" — the page's own ambient light shows through (default)
+   * "dark"   — a deep indigo band with its own colour bloom
+   * "accent" — the blue band
    */
-  bg?: "paper" | "sunk" | "slate" | "accent";
+  bg?: "canvas" | "dark" | "accent";
   pad?: "default" | "tight" | "flush";
-  /** A milled groove along the top edge of the band. */
+  /** Hairline along the top edge of the band. */
   topRule?: boolean;
-  /** Lay the inner container out as a 12-column grid (4 below 768px). */
   grid?: boolean;
   className?: string;
   innerClassName?: string;
@@ -24,27 +21,27 @@ type SectionProps = {
 };
 
 const BG: Record<NonNullable<SectionProps["bg"]>, string> = {
-  paper: "",
-  sunk: "sk-band-sunk",
-  slate: "sk-band-slate",
-  accent: "sk-band-accent",
+  canvas: "",
+  dark: "nx-band-dark",
+  accent: "nx-band-accent",
 };
 
 const PAD: Record<NonNullable<SectionProps["pad"]>, string> = {
-  default: "py-16 md:py-28",
-  tight: "py-10 md:py-16",
+  default: "py-20 md:py-32",
+  tight: "py-12 md:py-20",
   flush: "py-0",
 };
 
 /**
  * Section owns the band: its material, its vertical rhythm and the shell
- * width. Everything else composes it.
+ * width. Bands are edge to edge; the rounding lives on the surfaces inside
+ * them, never on the band itself.
  */
 export function Section({
   id,
   children,
   as: Tag = "section",
-  bg = "paper",
+  bg = "canvas",
   pad = "default",
   topRule = false,
   grid = false,
@@ -52,26 +49,20 @@ export function Section({
   innerClassName = "",
   ...aria
 }: SectionProps) {
-  const outer = [
-    "relative overflow-x-clip",
-    BG[bg],
-    PAD[pad],
-    className,
-  ].join(" ");
+  const outer = ["relative overflow-x-clip", BG[bg], PAD[pad], className].join(
+    " ",
+  );
 
   const inner = [
-    "sk-shell",
-    grid ? "grid grid-cols-4 gap-x-4 md:grid-cols-12 md:gap-x-6" : "",
+    "nx-shell",
+    grid ? "grid grid-cols-4 gap-x-5 md:grid-cols-12 md:gap-x-6" : "",
     innerClassName,
   ].join(" ");
 
   return (
     <Tag id={id} className={outer} {...aria}>
       {topRule ? (
-        <div
-          aria-hidden="true"
-          className="sk-groove absolute inset-x-0 top-0"
-        />
+        <div aria-hidden="true" className="nx-line absolute inset-x-0 top-0" />
       ) : null}
       <div className={inner}>{children}</div>
     </Tag>

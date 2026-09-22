@@ -67,12 +67,11 @@ export function DrawChart({
 
   return (
     <Frame
-      variant="device"
       label="CRS cutoff, general draws"
       note={EXAMPLE_PROFILE}
       className={className}
     >
-      <div className="sk-well-dark p-3">
+      <div className="nx-well-dark p-3">
         <svg
           role="img"
           aria-label={label}
@@ -81,8 +80,8 @@ export function DrawChart({
         >
           <defs>
             <linearGradient id="draw-wash" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#5C93EE" stopOpacity="0.38" />
-              <stop offset="100%" stopColor="#5C93EE" stopOpacity="0" />
+              <stop offset="0%" stopColor="#7AA2FF" stopOpacity="0.34" />
+              <stop offset="100%" stopColor="#7AA2FF" stopOpacity="0" />
             </linearGradient>
             <linearGradient id="draw-trace" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0%" stopColor="#7FB0F5" />
@@ -101,16 +100,16 @@ export function DrawChart({
                   y1={y}
                   x2={VIEW_W - PAD_R}
                   y2={y}
-                  stroke="rgba(255,255,255,0.09)"
+                  stroke="rgba(255,255,255,0.08)"
                   strokeWidth={1}
                 />
                 <text
                   x={PAD_L - 10}
                   y={y + 4}
                   textAnchor="end"
-                  className="sk-readout"
+                  className="nx-readout"
                   fontSize="11"
-                  fill="rgba(239,230,207,0.55)"
+                  fill="rgba(174,198,255,0.6)"
                 >
                   {value}
                 </text>
@@ -127,7 +126,7 @@ export function DrawChart({
             strokeWidth={2.5}
             strokeLinecap="round"
             strokeLinejoin="round"
-            style={{ filter: "drop-shadow(0 0 6px rgba(92,147,238,0.7))" }}
+            style={{ filter: "drop-shadow(0 0 6px rgba(122,162,255,0.8))" }}
           />
 
           {/* Glass beads on the last three rounds. */}
@@ -137,7 +136,7 @@ export function DrawChart({
                 cx={point.x}
                 cy={point.y}
                 r={5}
-                fill="#2A5FBE"
+                fill="#4F7DF3"
                 stroke="rgba(255,255,255,0.85)"
                 strokeWidth={1.5}
                 style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.5))" }}
@@ -154,9 +153,9 @@ export function DrawChart({
           <text
             x={PAD_L}
             y={VIEW_H - 8}
-            className="sk-readout"
+            className="nx-readout"
             fontSize="11"
-            fill="rgba(239,230,207,0.45)"
+            fill="rgba(174,198,255,0.45)"
           >
             {monthYear(first.date)}
           </text>
@@ -164,9 +163,9 @@ export function DrawChart({
             x={VIEW_W - PAD_R}
             y={VIEW_H - 8}
             textAnchor="end"
-            className="sk-readout"
+            className="nx-readout"
             fontSize="11"
-            fill="rgba(239,230,207,0.45)"
+            fill="rgba(174,198,255,0.45)"
           >
             {monthYear(latest.date)}
           </text>
@@ -175,7 +174,7 @@ export function DrawChart({
 
       <div className="mt-3 flex items-center justify-between">
         <MonoLabel tone="dim">Last {series.length} general rounds</MonoLabel>
-        <span className="sk-readout text-[13px] text-pw-accent">
+        <span className="nx-readout text-[13px] text-nx-accent">
           {latest.cutoff}
         </span>
       </div>

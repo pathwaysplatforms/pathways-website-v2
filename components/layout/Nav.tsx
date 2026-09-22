@@ -6,21 +6,23 @@ import { MonoLabel } from "@/components/ui/MonoLabel";
 import { SITE } from "@/lib/fixtures";
 
 /**
- * A frosted glass rail that floats over the page stock. It is sticky, so the
- * blur has something to do: content passing underneath is what makes the
- * material read as glass rather than as a pale rectangle.
+ * A floating frosted bar rather than a full-width rail: it sits inside the
+ * shell with the page visibly passing underneath it, which is the only thing
+ * that makes a blur read as glass.
+ *
+ * This is the one backdrop-filter on the site. A page full of them stutters.
  */
 export function Nav() {
   return (
-    <header className="sticky top-0 z-50">
-      <div className="sk-glass relative">
-        <div className="sk-shell flex h-[68px] items-center justify-between gap-4">
+    <header className="sticky top-0 z-50 pt-3 md:pt-4">
+      <div className="nx-shell">
+        <div className="nx-frost flex h-[62px] items-center justify-between gap-4 !rounded-full pr-2 pl-5 md:pl-6">
           <Link href="/" className="flex items-baseline gap-3">
-            <span className="font-display text-[22px] font-semibold tracking-[-0.02em] text-pw-ink [text-shadow:0_1px_0_rgba(255,255,255,0.9)]">
+            <span className="text-[19px] font-semibold tracking-[-0.03em] text-nx-ink">
               {SITE.name}
             </span>
             <span className="hidden sm:block">
-              <MonoLabel tone="dim">For Canada</MonoLabel>
+              <MonoLabel>For Canada</MonoLabel>
             </span>
           </Link>
 
@@ -28,12 +30,11 @@ export function Nav() {
             href={SITE.appUrl}
             variant="primary"
             size="md"
-            trailing={<ArrowRight size={15} strokeWidth={2.5} />}
+            trailing={<ArrowRight size={15} strokeWidth={2.25} />}
           >
             Try it out
           </Button>
         </div>
-        <div aria-hidden="true" className="sk-groove absolute inset-x-0 bottom-0" />
       </div>
     </header>
   );

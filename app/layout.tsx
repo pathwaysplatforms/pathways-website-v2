@@ -1,15 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, JetBrains_Mono, Source_Serif_4 } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-/** Display. A transitional serif reads as engraved, which sans cannot do. */
-const sourceSerif = Source_Serif_4({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-source-serif",
-});
-
-/** Interface and body. */
+/** Everything. Tight neo-grotesque at display sizes is the modern voice; a
+ *  serif would pull the whole page back toward the engraved, retro look. */
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
@@ -43,7 +37,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#E9E5DD",
+  themeColor: "#EDF0F7",
   width: "device-width",
   initialScale: 1,
 };
@@ -54,11 +48,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${sourceSerif.variable} ${inter.variable} ${jetbrainsMono.variable}`}
+      className={`${inter.variable} ${jetbrainsMono.variable}`}
     >
       <body>
-        {/* body::before lays the grain at z-1; content sits above it. */}
-        <div className="relative z-[2]">{children}</div>
+        {/* body::before lays the ambient light at z-0; content sits above it. */}
+        <div className="relative z-[1]">{children}</div>
       </body>
     </html>
   );

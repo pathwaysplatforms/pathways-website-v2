@@ -25,10 +25,10 @@ export default function DisclaimerPage() {
       <Section grid aria-labelledby="disclaimer-title">
         <div className="col-span-4 md:col-span-8">
           <header className="flex flex-col gap-8">
-            <h1 id="disclaimer-title" className="sk-display">
+            <h1 id="disclaimer-title" className="nx-display">
               Disclaimer
             </h1>
-            <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2 border-t border-[rgba(45,38,28,0.12)] pt-4">
+            <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2 border-t border-[rgba(18,26,56,0.1)] pt-4">
               <MonoLabel tone="dim">Last updated</MonoLabel>
               <MonoLabel>{LAST_UPDATED}</MonoLabel>
             </div>
@@ -37,9 +37,9 @@ export default function DisclaimerPage() {
           {/* PLACEHOLDER — legal review required */}
           <div className="mt-12 flex flex-col md:mt-16">
             <section className="flex flex-col gap-4 pb-10 md:pb-12">
-              <h2 className="sk-heading">What {SITE.name} is</h2>
-              <p className="sk-body">{DISCLAIMER}</p>
-              <p className="sk-body">
+              <h2 className="nx-heading">What {SITE.name} is</h2>
+              <p className="nx-body">{DISCLAIMER}</p>
+              <p className="nx-body">
                 {SITE.name} is a set of tools for tracking published immigration
                 rules and draw results, and for understanding how your own
                 recorded details line up against them. Everything it shows you
@@ -50,8 +50,8 @@ export default function DisclaimerPage() {
             <Rule />
 
             <section className="flex flex-col gap-4 py-10 md:py-12">
-              <h2 className="sk-heading">What {SITE.name} is not</h2>
-              <p className="sk-body">
+              <h2 className="nx-heading">What {SITE.name} is not</h2>
+              <p className="nx-body">
                 {SITE.name} does not assess your case, does not recommend a
                 course of action, and does not stand in for a regulated
                 professional. Using it does not create a solicitor-client or
@@ -64,9 +64,9 @@ export default function DisclaimerPage() {
             <Rule />
 
             <section className="flex flex-col gap-4 py-10 md:py-12">
-              <h2 className="sk-heading">Where the information comes from</h2>
-              <p className="sk-body">{DATA_SOURCE_NOTE}</p>
-              <p className="sk-body">
+              <h2 className="nx-heading">Where the information comes from</h2>
+              <p className="nx-body">{DATA_SOURCE_NOTE}</p>
+              <p className="nx-body">
                 Published rules change, sometimes without notice, and our
                 reading of a source can lag behind the source itself. Where our
                 data has not refreshed, we mark it as stale rather than
@@ -78,10 +78,10 @@ export default function DisclaimerPage() {
             <Rule />
 
             <section className="flex flex-col gap-4 py-10 md:py-12">
-              <h2 className="sk-heading">
+              <h2 className="nx-heading">
                 Speaking to a regulated professional
               </h2>
-              <p className="sk-body">
+              <p className="nx-body">
                 Consult a lawyer or an RCIC regulated by the CICC. A regulated
                 professional can review the particulars of your case in a way
                 that a tool cannot, and is accountable to a regulator for doing
@@ -93,8 +93,8 @@ export default function DisclaimerPage() {
 
             {/* PLACEHOLDER — legal review required */}
             <section className="flex flex-col gap-4 py-10 md:py-12">
-              <h2 className="sk-heading">Provisional terms</h2>
-              <p className="sk-body">
+              <h2 className="nx-heading">Provisional terms</h2>
+              <p className="nx-body">
                 This page is provisional and has not yet been reviewed by
                 counsel. The final version will set out the terms that govern
                 use of {SITE.name}, including limitations of liability and the
@@ -106,9 +106,9 @@ export default function DisclaimerPage() {
             <Rule />
 
             <section className="flex flex-col gap-4 pt-10 md:pt-12">
-              <h2 className="sk-heading">Contact</h2>
+              <h2 className="nx-heading">Contact</h2>
               {/* PLACEHOLDER — legal review required */}
-              <p className="sk-body">
+              <p className="nx-body">
                 A contact route for questions about this page will be published
                 here alongside the reviewed version.
               </p>

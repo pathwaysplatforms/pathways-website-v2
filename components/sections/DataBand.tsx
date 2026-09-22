@@ -1,14 +1,10 @@
 import { MonoLabel } from "@/components/ui/MonoLabel";
+import { Rule } from "@/components/ui/Rule";
 import { Section } from "@/components/ui/Section";
 import { formatRelativeTime, splitRelativeTime } from "@/lib/draws";
 import type { DrawSummary } from "@/lib/fixtures";
 
-type Cell = {
-  value: string;
-  /** Mono qualifier beside the figure. "" when unused. */
-  unit: string;
-  label: string;
-};
+type Cell = { value: string; unit: string; label: string };
 
 function buildCells(summary: DrawSummary): readonly Cell[] {
   const updated = splitRelativeTime(formatRelativeTime(summary.lastUpdatedIso));
@@ -22,9 +18,8 @@ function buildCells(summary: DrawSummary): readonly Cell[] {
 }
 
 /**
- * The coverage band, built as an instrument face: a slate chassis carrying
- * four recessed displays, each with its caption engraved into the metal above
- * it and its figure lit inside the well.
+ * The coverage band: a deep indigo field with its own colour bloom, carrying
+ * four figures that are lit rather than printed.
  *
  * NEVER FETCHES. app/page.tsx calls getDrawSummary() — which cannot throw —
  * and passes the result down, so the six-hour revalidate window stays with
@@ -34,36 +29,34 @@ export function DataBand({ summary }: { summary: DrawSummary }) {
   const cells = buildCells(summary);
 
   return (
-    <Section bg="slate" pad="tight" aria-label="Data coverage">
-      <dl className="relative grid grid-cols-2 gap-x-8 gap-y-8 md:grid-cols-4 md:gap-x-10">
+    <Section bg="dark" pad="tight" aria-label="Data coverage">
+      <dl className="grid grid-cols-2 gap-y-10 md:grid-cols-4 md:gap-y-0">
         {cells.map((cell, index) => (
-          <div key={cell.label} className="relative">
-            {/* Vertical groove between modules, as on a rack panel. */}
+          <div
+            key={cell.label}
+            className="relative flex flex-col gap-3 md:px-8 md:first:pl-0 md:last:pr-0"
+          >
             {index > 0 ? (
-              <span
-                aria-hidden="true"
-                className={[
-                  "absolute top-1 bottom-1 -left-4 w-[2px] md:-left-5",
-                  "bg-[linear-gradient(90deg,rgba(0,0,0,0.5)_0_1px,rgba(255,255,255,0.08)_1px_2px)]",
-                  index === 2 ? "hidden md:block" : "",
-                ].join(" ")}
+              <Rule
+                orientation="vertical"
+                tone="dark"
+                className={`absolute inset-y-0 -left-4 md:left-0 ${
+                  index === 2 ? "hidden md:block" : ""
+                }`}
               />
             ) : null}
 
-            <MonoLabel as="dt" tone="dark" className="block">
-              {cell.label}
-            </MonoLabel>
-
-            <dd className="sk-well-dark mt-2.5 flex items-baseline gap-2 px-3.5 py-2.5">
-              <span className="sk-readout sk-readout-lit text-[clamp(30px,3.6vw,46px)] leading-none">
+            <dd className="order-1 flex items-baseline gap-2">
+              <span className="nx-readout nx-lit text-[clamp(34px,4vw,54px)] leading-none">
                 {cell.value}
               </span>
               {cell.unit !== "" ? (
-                <span className="sk-readout text-[11px] leading-none tracking-[0.08em] text-white/45 uppercase">
-                  {cell.unit}
-                </span>
+                <span className="nx-label nx-label-dark">{cell.unit}</span>
               ) : null}
             </dd>
+            <MonoLabel as="dt" tone="dark" className="order-2 block">
+              {cell.label}
+            </MonoLabel>
           </div>
         ))}
       </dl>
