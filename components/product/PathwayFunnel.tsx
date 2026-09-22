@@ -25,11 +25,11 @@ export function PathwayFunnel({
   return (
     <div className={`w-full ${className}`}>
       <div className="flex items-baseline justify-between gap-4">
-        <p className="pw-eyebrow">Pathways checked</p>
-        <p className="text-[12px] leading-none text-pw-text-dim">
-          <span className="pw-figure">{totalMapped}</span> mapped{" "}
+        <p className="pw-mono">Pathways checked</p>
+        <p className="text-[12px] leading-none text-pw-ink-dim">
+          <span className="pw-num">{totalMapped}</span> mapped{" "}
           <span aria-hidden="true">·</span>{" "}
-          <span className="pw-figure">{matchedCount}</span> open
+          <span className="pw-num">{matchedCount}</span> open
         </p>
       </div>
 

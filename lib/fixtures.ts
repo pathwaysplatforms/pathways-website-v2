@@ -57,61 +57,89 @@ export const DRAW_TYPES: readonly string[] = [
 ];
 
 /* -------------------------------------------------------------------------- */
-/* Tour                                                                       */
+/* Specimens                                                                  */
 /* -------------------------------------------------------------------------- */
 
-export type TourStepId =
+export type SpecimenId =
   | "voice"
-  | "matching"
-  | "mission-control"
-  | "next-action"
+  | "match"
+  | "standing"
+  | "next"
   | "draws";
 
-export type TourStep = {
-  id: TourStepId;
-  /** Section anchor id, also observed by PathLine. */
-  anchor: string;
-  eyebrow: string;
-  heading: string;
-  /** Exactly two sentences. */
+/**
+ * How the block is composed. Never the same value twice in a row — the
+ * alternation is what stops the run of five reading as a card grid.
+ *   "text-mock"  text spans 5 columns, mock spans 7
+ *   "mock-text"  mock spans 8 columns, text spans 4
+ *   "stacked"    text full width, mock full width underneath
+ */
+export type SpecimenLayout = "text-mock" | "mock-text" | "stacked";
+
+export type Specimen = {
+  id: SpecimenId;
+  /** Two digits. Rendered as an outlined numeral, not an eyebrow. */
+  numeral: string;
+  /** Mono label beside the numeral. */
+  label: string;
+  /** A concrete fact or example. Never a question, never "X, not Y". */
+  headline: string;
+  /** ONE sentence, 22 words maximum. */
   body: string;
+  /** Optional mono caption sitting under the headline. */
+  caption?: string;
+  /**
+   * True when a figure in the HEADLINE comes from the example profile rather
+   * than a published source. The block must then carry an EXAMPLE_PROFILE
+   * label beside the headline as well as inside the Frame.
+   */
+  headlineIsExample?: boolean;
+  layout: SpecimenLayout;
 };
 
-export const TOUR_STEPS: readonly TourStep[] = [
+export const SPECIMENS: readonly Specimen[] = [
   {
     id: "voice",
-    anchor: "tour-voice",
-    eyebrow: "STEP 01 — ONBOARDING",
-    heading: "Tell it about yourself. Out loud.",
-    body: "Talk through your education, work history, language tests and family situation the way you would explain them to a person. Pathways turns that into a structured profile you can correct line by line.",
+    numeral: "01",
+    label: "Voice",
+    headline: "Describe your life out loud. We turn it into a file.",
+    caption: "21 Express Entry fields captured by voice",
+    body: "You talk; Pathways writes the structured profile, and you correct any line it gets wrong.",
+    layout: "text-mock",
   },
   {
-    id: "matching",
-    anchor: "tour-matching",
-    eyebrow: "STEP 02 — MATCHING",
-    heading: "Watch 107 pathways become 3.",
-    body: "Every federal, provincial and territorial pathway is checked against your profile at once. You see which ones stay open, which ones close, and the published rule behind each result.",
+    id: "match",
+    numeral: "02",
+    label: "Match",
+    headline: "107 in. 3 out.",
+    body: "Every federal, provincial and territorial pathway is checked against your profile at once, with the published rule attached.",
+    layout: "mock-text",
   },
   {
-    id: "mission-control",
-    anchor: "tour-mission-control",
-    eyebrow: "STEP 03 — MISSION CONTROL",
-    heading: "Know exactly where you stand.",
-    body: "Your score, your documents and your deadlines sit on one screen instead of in six browser tabs. Nothing is hidden behind a summary you cannot open up.",
+    id: "standing",
+    numeral: "03",
+    label: "Standing",
+    headline: "CRS 472. Last cutoff 491. Gap: 19.",
+    headlineIsExample: true,
+    body: "Your score sits beside the most recent published cutoff, so the distance between them is a number.",
+    layout: "stacked",
   },
   {
-    id: "next-action",
-    anchor: "tour-next-action",
-    eyebrow: "STEP 04 — NEXT BEST ACTION",
-    heading: "Real-world actions, not busywork.",
-    body: "Pathways shows what each action would change about your file before you spend a month on it. You decide what is worth doing.",
+    id: "next",
+    numeral: "04",
+    label: "Next",
+    headline: "Next: retake your language test.",
+    headlineIsExample: true,
+    body: "Each action shows what it would change about your file before you spend a month on it.",
+    layout: "text-mock",
   },
   {
     id: "draws",
-    anchor: "tour-draws",
-    eyebrow: "STEP 05 — DRAWS TRACKER",
-    heading: "Every draw since 2015, live.",
-    body: "Each round of invitations is recorded with its date, category and cutoff as published. You can follow the trend instead of refreshing a government page.",
+    numeral: "05",
+    label: "Draws",
+    headline: "Every Express Entry draw since 2015.",
+    body: "Each round of invitations is recorded with its date, category and cutoff exactly as published.",
+    layout: "mock-text",
   },
 ];
 
@@ -246,35 +274,27 @@ export const WAVEFORM_BARS: readonly number[] = [
 /** Indices of the three bars rendered in accent. */
 export const WAVEFORM_ACCENT_INDICES: readonly number[] = [8, 13, 14];
 
+/**
+ * Honesty rule: every number shown in a product mock carries this label
+ * inside its Frame. Illustrative figures are never presented as thresholds.
+ */
+export const EXAMPLE_PROFILE = "Example profile";
+
 export const VOICE_TRANSCRIPT =
   "I finished my degree in Toronto in 2023, and I have been working here as a data analyst since.";
 
 /* -------------------------------------------------------------------------- */
-/* Honesty                                                                    */
+/* Manifesto                                                                  */
 /* -------------------------------------------------------------------------- */
 
-export type HonestyClaim = {
-  id: string;
-  title: string;
-  body: string;
-};
-
-export const HONESTY_CLAIMS: readonly HonestyClaim[] = [
-  {
-    id: "cited",
-    title: "Every rule cites its source.",
-    body: "Each requirement in Pathways carries a link to the IRCC or provincial page it came from and the date we read it. If you disagree with something we show you, you can go straight to the original and check.",
-  },
-  {
-    id: "stale",
-    title: "Stale data is flagged, not compared.",
-    body: "When draw data has not refreshed, we mark it as stale and stop comparing it to your score. A number that might be out of date is worse than no number, so we do not quietly serve you one.",
-  },
-  {
-    id: "unknown",
-    title: "When we do not know, we say so.",
-    body: "Some rules are discretionary, some are unpublished, and some change without notice. In those places Pathways says it does not know rather than filling the gap with a guess.",
-  },
+/**
+ * Three statements, one line each, set at Display size and separated by the
+ * 2px rule. No body copy underneath — the line is the whole argument.
+ */
+export const MANIFESTO: readonly string[] = [
+  "Every rule cites its source.",
+  "Old data gets flagged.",
+  "If we don't know, we say so.",
 ];
 
 /* -------------------------------------------------------------------------- */

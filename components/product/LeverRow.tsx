@@ -26,12 +26,12 @@ export function LeverRow({
       className={`flex items-baseline justify-between gap-4 border-b border-pw-hairline py-3.5 ${className}`}
     >
       <div className="min-w-0">
-        <p className="text-[14px] leading-snug text-pw-text">{lever.label}</p>
-        <p className="mt-0.5 text-[12px] leading-snug text-pw-text-dim">
+        <p className="text-[14px] leading-snug text-pw-ink">{lever.label}</p>
+        <p className="mt-0.5 text-[12px] leading-snug text-pw-ink-dim">
           {lever.note}
         </p>
       </div>
-      <p className="pw-figure shrink-0 text-[15px] leading-none text-pw-accent">
+      <p className="pw-num shrink-0 text-[15px] leading-none text-pw-accent">
         {formatDelta(lever.delta)}
       </p>
     </div>

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { Eyebrow } from "@/components/ui/Eyebrow";
+import { MonoLabel } from "@/components/ui/MonoLabel";
 import { Section } from "@/components/ui/Section";
 import { DISCLAIMER, PRIVACY_POSTURE, SITE } from "@/lib/fixtures";
 
@@ -15,9 +15,9 @@ const LAST_UPDATED = "20 September 2026";
 export default function PrivacyPage() {
   return (
     <main>
-      <Section width="prose" aria-labelledby="privacy-title">
+      <Section aria-labelledby="privacy-title">
         <div className="flex flex-col gap-5">
-          <Eyebrow>LEGAL</Eyebrow>
+          <MonoLabel tone="dim">Legal</MonoLabel>
           <h1 id="privacy-title" className="pw-heading">
             Privacy
           </h1>
@@ -27,7 +27,7 @@ export default function PrivacyPage() {
         {/* PLACEHOLDER — legal review required */}
         <div className="mt-12 flex flex-col gap-10">
           <section className="flex flex-col gap-3">
-            <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-pw-text">
+            <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-pw-ink">
               Our posture
             </h2>
             <p className="pw-body">{PRIVACY_POSTURE}</p>
@@ -39,7 +39,7 @@ export default function PrivacyPage() {
           </section>
 
           <section className="flex flex-col gap-3">
-            <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-pw-text">
+            <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-pw-ink">
               What we hold
             </h2>
             <p className="pw-body">
@@ -51,7 +51,7 @@ export default function PrivacyPage() {
           </section>
 
           <section className="flex flex-col gap-3">
-            <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-pw-text">
+            <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-pw-ink">
               Documents
             </h2>
             <p className="pw-body">
@@ -62,7 +62,7 @@ export default function PrivacyPage() {
           </section>
 
           <section className="flex flex-col gap-3">
-            <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-pw-text">
+            <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-pw-ink">
               Deletion
             </h2>
             <p className="pw-body">
@@ -74,7 +74,7 @@ export default function PrivacyPage() {
 
           {/* PLACEHOLDER — legal review required */}
           <section className="flex flex-col gap-3">
-            <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-pw-text">
+            <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-pw-ink">
               Provisional terms
             </h2>
             <p className="pw-body">
@@ -88,14 +88,14 @@ export default function PrivacyPage() {
           </section>
 
           <section className="flex flex-col gap-3">
-            <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-pw-text">
+            <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-pw-ink">
               Scope
             </h2>
             <p className="pw-body">{DISCLAIMER}</p>
           </section>
 
           <section className="flex flex-col gap-3">
-            <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-pw-text">
+            <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-pw-ink">
               Contact
             </h2>
             {/* PLACEHOLDER — legal review required */}

@@ -73,18 +73,18 @@ export function DrawChart({
 
   return (
     <figure className={`w-full ${className}`}>
-      <figcaption className="pw-eyebrow">CRS cutoff — general draws</figcaption>
+      <figcaption className="pw-mono">CRS cutoff — general draws</figcaption>
 
       <div className="mt-4 flex items-start gap-2">
         <div className="relative h-40 w-9 shrink-0">
           <span
-            className="pw-figure absolute right-0 -translate-y-1/2 text-[11px] leading-none text-pw-text-dim"
+            className="pw-num absolute right-0 -translate-y-1/2 text-[11px] leading-none text-pw-ink-dim"
             style={{ top: PLOT_TOP }}
           >
             {max}
           </span>
           <span
-            className="pw-figure absolute right-0 -translate-y-1/2 text-[11px] leading-none text-pw-text-dim"
+            className="pw-num absolute right-0 -translate-y-1/2 text-[11px] leading-none text-pw-ink-dim"
             style={{ top: PLOT_BOTTOM }}
           >
             {min}
@@ -124,7 +124,7 @@ export function DrawChart({
         </svg>
       </div>
 
-      <div className="pw-figure mt-2 flex justify-between pl-11 text-[11px] leading-none text-pw-text-dim">
+      <div className="pw-num mt-2 flex justify-between pl-11 text-[11px] leading-none text-pw-ink-dim">
         <span>{monthYear(first.date)}</span>
         <span>{monthYear(latest.date)}</span>
       </div>

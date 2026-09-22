@@ -1,11 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Urbanist } from "next/font/google";
-import { PathLine } from "@/components/layout/PathLine";
-import { TOUR_STEPS } from "@/lib/fixtures";
+import { JetBrains_Mono, Urbanist } from "next/font/google";
+import { GridOverlay } from "@/components/ui/GridOverlay";
 import "./globals.css";
-
-/** The tour anchors PathLine tracks. Mounted once, for the whole scroll. */
-const TOUR_ANCHORS = TOUR_STEPS.map((step) => step.anchor);
 
 const urbanist = Urbanist({
   subsets: ["latin"],
@@ -13,20 +9,28 @@ const urbanist = Urbanist({
   variable: "--font-urbanist",
 });
 
+/** Labels, data, captions, footer. Exactly the two weights the contract allows. */
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  display: "swap",
+  variable: "--font-jetbrains-mono",
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://pathways.xx"),
   title: {
-    default: "Pathways — Canadian immigration, run like a project",
+    default: "Pathways — Canadian immigration, mapped to your file",
     template: "%s — Pathways",
   },
   description:
-    "Pathways maps Canadian immigration pathways, tracks every Express Entry draw since 2015, and shows you where your file actually stands.",
+    "Pathways maps 107 Canadian immigration pathways against one profile and tracks every Express Entry draw since 2015.",
   openGraph: {
     type: "website",
     siteName: "Pathways",
-    title: "Pathways — Canadian immigration, run like a project",
+    title: "Pathways — Canadian immigration, mapped to your file",
     description:
-      "Pathways maps Canadian immigration pathways, tracks every Express Entry draw since 2015, and shows you where your file actually stands.",
+      "Pathways maps 107 Canadian immigration pathways against one profile and tracks every Express Entry draw since 2015.",
   },
   robots: { index: true, follow: true },
 };
@@ -42,10 +46,15 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={urbanist.variable}>
+    <html
+      lang="en"
+      className={`${urbanist.variable} ${jetbrainsMono.variable}`}
+    >
       <body>
-        <PathLine sections={TOUR_ANCHORS} />
-        {children}
+        {/* The grid is visible. It paints over section backgrounds and under
+            every piece of content — see the z-index pair below. */}
+        <GridOverlay />
+        <div className="relative z-[2]">{children}</div>
       </body>
     </html>
   );

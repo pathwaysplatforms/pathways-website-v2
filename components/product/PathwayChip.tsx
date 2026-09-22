@@ -24,7 +24,7 @@ export function PathwayChip({
       className={[
         "inline-flex items-center gap-1.5 rounded-full border border-pw-hairline",
         "px-2.5 py-1 text-[12px] leading-none whitespace-nowrap",
-        isMatched ? "text-pw-text" : "text-pw-text-dim line-through",
+        isMatched ? "text-pw-ink" : "text-pw-ink-dim line-through",
         className,
       ].join(" ")}
     >

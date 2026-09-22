@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { Eyebrow } from "@/components/ui/Eyebrow";
+import { MonoLabel } from "@/components/ui/MonoLabel";
 import { Section } from "@/components/ui/Section";
 import { DATA_SOURCE_NOTE, DISCLAIMER, SITE } from "@/lib/fixtures";
 
@@ -15,9 +15,9 @@ const LAST_UPDATED = "20 September 2026";
 export default function DisclaimerPage() {
   return (
     <main>
-      <Section width="prose" aria-labelledby="disclaimer-title">
+      <Section aria-labelledby="disclaimer-title">
         <div className="flex flex-col gap-5">
-          <Eyebrow>LEGAL</Eyebrow>
+          <MonoLabel tone="dim">Legal</MonoLabel>
           <h1 id="disclaimer-title" className="pw-heading">
             Disclaimer
           </h1>
@@ -27,7 +27,7 @@ export default function DisclaimerPage() {
         {/* PLACEHOLDER — legal review required */}
         <div className="mt-12 flex flex-col gap-10">
           <section className="flex flex-col gap-3">
-            <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-pw-text">
+            <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-pw-ink">
               What {SITE.name} is
             </h2>
             <p className="pw-body">{DISCLAIMER}</p>
@@ -40,7 +40,7 @@ export default function DisclaimerPage() {
           </section>
 
           <section className="flex flex-col gap-3">
-            <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-pw-text">
+            <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-pw-ink">
               What {SITE.name} is not
             </h2>
             <p className="pw-body">
@@ -53,7 +53,7 @@ export default function DisclaimerPage() {
           </section>
 
           <section className="flex flex-col gap-3">
-            <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-pw-text">
+            <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-pw-ink">
               Where the information comes from
             </h2>
             <p className="pw-body">{DATA_SOURCE_NOTE}</p>
@@ -66,7 +66,7 @@ export default function DisclaimerPage() {
           </section>
 
           <section className="flex flex-col gap-3">
-            <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-pw-text">
+            <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-pw-ink">
               Speaking to a regulated professional
             </h2>
             <p className="pw-body">
@@ -79,7 +79,7 @@ export default function DisclaimerPage() {
 
           {/* PLACEHOLDER — legal review required */}
           <section className="flex flex-col gap-3">
-            <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-pw-text">
+            <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-pw-ink">
               Provisional terms
             </h2>
             <p className="pw-body">
@@ -92,7 +92,7 @@ export default function DisclaimerPage() {
           </section>
 
           <section className="flex flex-col gap-3">
-            <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-pw-text">
+            <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-pw-ink">
               Contact
             </h2>
             {/* PLACEHOLDER — legal review required */}

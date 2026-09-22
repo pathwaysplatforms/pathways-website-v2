@@ -1,61 +1,71 @@
 import type { ElementType, ReactNode } from "react";
 
 type SectionProps = {
-  /** Anchor id — PathLine observes these. */
   id?: string;
   children: ReactNode;
   /** Semantic element. Defaults to <section>. */
   as?: ElementType;
   /**
-   * "content" (default) caps the inner column at 1120px.
-   * "shell" caps at 1440px, for edge-to-edge layouts like the tour.
-   * "prose" caps at 720px, for legal and long-form copy.
+   * Background band. "accent" also sets the text colour to white, because
+   * ink on #1A56DB fails contrast — never override that.
    */
-  width?: "content" | "shell" | "prose";
-  /**
-   * Vertical rhythm. "default" is the contract's 120px desktop / 64px mobile.
-   * "closing" is the 200px block reserved for the final CTA.
-   * "flush" removes vertical padding for strips that sit against a neighbour.
-   */
-  pad?: "default" | "closing" | "flush";
-  /** Extra classes for the OUTER element only. Never re-specify padding here. */
+  bg?: "bg" | "paper" | "accent";
+  /** "default" is 128px desktop / 64px mobile. "flush" removes it. */
+  pad?: "default" | "flush";
+  /** Draws the 2px ink rule along the top edge of the block. */
+  topRule?: boolean;
+  /** Lay the inner container out as the 12/4 column grid. */
+  grid?: boolean;
+  /** Extra classes for the OUTER element. Never re-specify padding here. */
   className?: string;
-  /** Extra classes for the inner container. Never re-specify max-width here. */
+  /** Extra classes for the inner container. Never re-specify width here. */
   innerClassName?: string;
   "aria-labelledby"?: string;
   "aria-label"?: string;
 };
 
-const WIDTH: Record<NonNullable<SectionProps["width"]>, string> = {
-  content: "max-w-pw-content",
-  shell: "max-w-pw-shell",
-  prose: "max-w-pw-prose",
+const BG: Record<NonNullable<SectionProps["bg"]>, string> = {
+  bg: "bg-pw-bg",
+  paper: "bg-pw-paper",
+  accent: "bg-pw-accent text-pw-bg",
 };
 
 const PAD: Record<NonNullable<SectionProps["pad"]>, string> = {
-  default: "py-16 lg:py-30",
-  closing: "py-30 lg:py-50",
+  default: "py-16 md:py-32",
   flush: "py-0",
 };
 
 /**
- * Section owns ALL vertical padding and container widths on this site.
- * Every other section composes it. Nothing else sets py-* or max-w-* at the
- * page level — if you find yourself wanting to, change this file instead.
+ * Section owns ALL vertical rhythm, the outer margins and the column grid.
+ * Every block composes it. Nothing else sets py-*, max-w-* or the grid at the
+ * page level — if you want to, change this file instead.
+ *
+ * overflow-x is clipped per section so Display type may crop off the right
+ * viewport edge on purpose without the page ever scrolling sideways.
  */
 export function Section({
   id,
   children,
   as: Tag = "section",
-  width = "content",
+  bg = "bg",
   pad = "default",
+  topRule = false,
+  grid = false,
   className = "",
   innerClassName = "",
   ...aria
 }: SectionProps) {
+  const outer = [
+    "relative overflow-x-clip",
+    BG[bg],
+    PAD[pad],
+    topRule ? "border-t-2 border-pw-ink" : "",
+    className,
+  ].join(" ");
+
   return (
-    <Tag id={id} className={`px-6 lg:px-10 ${PAD[pad]} ${className}`} {...aria}>
-      <div className={`mx-auto w-full ${WIDTH[width]} ${innerClassName}`}>
+    <Tag id={id} className={outer} {...aria}>
+      <div className={`pw-shell ${grid ? "pw-grid" : ""} ${innerClassName}`}>
         {children}
       </div>
     </Tag>

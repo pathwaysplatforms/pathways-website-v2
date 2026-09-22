@@ -1,4 +1,3 @@
-import { Hairline } from "@/components/ui/Hairline";
 import { LeverRow } from "@/components/product/LeverRow";
 import type { Lever } from "@/lib/fixtures";
 import { MISSION_CONTROL } from "@/lib/fixtures";
@@ -31,14 +30,14 @@ export function MissionControlCard({
     >
       <div className="px-5 pb-4 pt-5">
         <p className="pw-eyebrow">{data.scoreLabel}</p>
-        <p className="pw-figure mt-2 text-[44px] leading-none">{data.score}</p>
-        <p className="mt-3 text-[13px] leading-none text-pw-text-dim">
+        <p className="pw-num mt-2 text-[44px] leading-none">{data.score}</p>
+        <p className="mt-3 text-[13px] leading-none text-pw-ink-dim">
           {data.referenceLabel}{" "}
-          <span className="pw-figure text-pw-text-dim">{data.reference}</span>
+          <span className="pw-num text-pw-ink-dim">{data.reference}</span>
         </p>
       </div>
 
-      <Hairline />
+      <div role="presentation" className="border-t border-pw-hairline" />
 
       <div className="px-5 [&>*:last-child]:border-b-0">
         {data.levers.map((lever) => (

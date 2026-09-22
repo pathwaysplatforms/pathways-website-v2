@@ -24,9 +24,9 @@ export function Footer() {
   return (
     <Section
       as="footer"
-      width="shell"
       pad="default"
-      className="border-t border-pw-hairline"
+      topRule
+      className=""
       aria-label="Site footer"
     >
       <div className="flex flex-col gap-10">
@@ -48,7 +48,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="pw-body text-[15px] transition-colors duration-200 ease-pw hover:text-pw-text"
+                    className="pw-body text-[15px] transition-colors duration-200 ease-pw hover:text-pw-ink"
                   >
                     {link.label}
                   </Link>

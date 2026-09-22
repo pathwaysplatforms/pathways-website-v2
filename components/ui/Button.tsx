@@ -6,28 +6,35 @@ type ButtonProps = {
   /** Internal route or external URL. Renders <a> via next/link. */
   href: string;
   /**
-   * "primary" — solid accent. The only accent-filled element on the site.
-   * "quiet"   — hairline-bordered, text-coloured. For secondary destinations.
+   * "primary" — accent fill, white label.
+   * "secondary" — white fill, ink label.
+   * Both carry the same 2px ink border and the same hard shadow.
    */
-  variant?: "primary" | "quiet";
+  variant?: "primary" | "secondary";
   size?: "md" | "lg";
   className?: string;
 };
 
 const VARIANT: Record<NonNullable<ButtonProps["variant"]>, string> = {
-  primary: "bg-pw-accent text-pw-bg hover:opacity-90",
-  quiet: "border border-pw-hairline text-pw-text hover:border-pw-text",
+  // Text on accent is always white — ink on this blue fails contrast.
+  primary: "bg-pw-accent text-pw-bg hover:bg-pw-ink",
+  secondary: "bg-pw-bg text-pw-ink hover:bg-pw-paper",
 };
 
 const SIZE: Record<NonNullable<ButtonProps["size"]>, string> = {
-  md: "h-11 px-5 text-[15px]",
-  lg: "h-13 px-7 text-[17px]",
+  md: "h-12 px-6 text-[13px]",
+  lg: "h-14 px-8 text-[15px]",
 };
 
 /**
- * The only button on this site. Accent fill is reserved for `primary`, which
- * should appear at most once per viewport (nav, hero, closing CTA).
- * Transition is opacity/border-colour only, on var(--pw-ease).
+ * The only button on this site.
+ *
+ * Mechanical motion, 100ms linear (.pw-mech). Pressing it moves the element
+ * 3px into its own shadow, which shrinks from --pw-shadow to --pw-shadow-sm
+ * (.pw-press). No easing curve, no opacity fade, no scale.
+ *
+ * Focus ring comes from the global :focus-visible rule — 3px ink, 3px offset,
+ * square. Do not re-specify it here.
  */
 export function Button({
   children,
@@ -39,9 +46,9 @@ export function Button({
   const isExternal = href.startsWith("http");
 
   const classes = [
-    "inline-flex items-center justify-center gap-2 rounded-md font-semibold",
-    "whitespace-nowrap tracking-[-0.01em] transition-[opacity,border-color]",
-    "duration-200 ease-pw",
+    "pw-mono pw-mech pw-press",
+    "inline-flex items-center justify-center gap-3 whitespace-nowrap",
+    "border-2 border-pw-ink",
     VARIANT[variant],
     SIZE[size],
     className,
