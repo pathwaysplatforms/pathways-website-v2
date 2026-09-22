@@ -1,280 +1,564 @@
 @import "tailwindcss";
 
-/* ---------------------------------------------------------------------------
-   PATHWAYS — Swiss Brutalist design tokens.
+/* ===========================================================================
+   PATHWAYS — skeuomorphic material system.
 
-   This block is the ONLY place a raw hex value may appear in this codebase.
+   Every surface here is a real material lit from above: warm paper, brushed
+   aluminium, machined steel, bevelled glass, polished brass. The grammar is
+   always the same four layers, and breaking it is what makes skeuomorphism
+   look like a 2010 tutorial instead of an instrument:
 
-   Colour tokens live in @theme so Tailwind generates utilities for them
-   (bg-pw-paper, border-pw-ink, text-pw-ink-dim). Composite tokens — the rule,
-   the two hard shadows, the grid metrics — cannot be @theme keys, so they are
-   declared on :root and consumed as var(--pw-rule) / var(--pw-shadow).
---------------------------------------------------------------------------- */
+     1. a gradient on the surface (lighter at the top — light comes from above)
+     2. a 1px inset highlight along the top edge
+     3. a 1px inset shade along the bottom edge
+     4. a two-part drop shadow: one tight contact shadow, one soft ambient
+
+   Text engraves (dark text, light shadow BELOW) on light materials and
+   embosses (light text, dark shadow ABOVE) on dark ones. Never mix them.
+   =========================================================================== */
+
 @theme {
-  --color-pw-bg: #FFFFFF;
-  --color-pw-paper: #F3F3EF;
-  --color-pw-ink: #0A0A0A;
-  --color-pw-ink-dim: #525252;
-  --color-pw-hairline: #EAEDF0;
-  --color-pw-accent: #1A56DB;
+  --color-pw-ink: #2A2825;
+  --color-pw-ink-soft: #5E594F;
+  --color-pw-ink-faint: #8C857A;
+  --color-pw-paper: #E9E5DD;
+  --color-pw-paper-dark: #D6D1C6;
+  --color-pw-card: #FAF8F4;
+  --color-pw-steel: #C9C4B8;
+  --color-pw-slate: #2E3238;
+  --color-pw-slate-deep: #1B1E22;
+  --color-pw-accent: #1F4FA8;
+  --color-pw-accent-lit: #3B76DC;
+  --color-pw-brass: #B08D46;
 
-  /* Scroll vocabulary only. Mechanical motion is 100ms linear — never this. */
-  --ease-pw: cubic-bezier(0.16, 1, 0.3, 1);
+  --font-display: var(--font-source-serif), Georgia, serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
 
-  --font-sans: var(--font-urbanist), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
-
-  --container-pw-shell: 1440px;
+  --container-pw-shell: 1360px;
 }
 
 :root {
-  --pw-bg: var(--color-pw-bg);
-  --pw-paper: var(--color-pw-paper);
-  --pw-ink: var(--color-pw-ink);
-  --pw-ink-dim: var(--color-pw-ink-dim);
-  --pw-hairline: var(--color-pw-hairline);
-  --pw-accent: var(--color-pw-accent);
+  /* --- light ------------------------------------------------------------- */
+  --sk-hi: rgba(255, 255, 255, 0.92);
+  --sk-hi-soft: rgba(255, 255, 255, 0.55);
+  --sk-lo: rgba(60, 52, 40, 0.16);
 
-  /* Structure is 2px ink. Data INSIDE a component is 1px hairline.
-     Thick outside, thin inside — the signature of the whole system. */
-  --pw-rule: 2px solid var(--pw-ink);
+  /* --- elevation: contact shadow + ambient shadow, always paired ---------- */
+  --sk-raise-sm: 0 1px 1px rgba(45, 38, 28, 0.13), 0 2px 6px rgba(45, 38, 28, 0.09);
+  --sk-raise: 0 1px 1px rgba(45, 38, 28, 0.16), 0 4px 10px rgba(45, 38, 28, 0.11), 0 14px 30px rgba(45, 38, 28, 0.09);
+  --sk-raise-lg: 0 2px 3px rgba(45, 38, 28, 0.17), 0 10px 24px rgba(45, 38, 28, 0.14), 0 32px 64px rgba(45, 38, 28, 0.16);
 
-  /* Hard offsets only. No blur, no alpha, ever. */
-  --pw-shadow: 6px 6px 0 var(--pw-ink);
-  --pw-shadow-sm: 3px 3px 0 var(--pw-ink);
+  /* --- bevels: inset shadows, so they ride on top of the gradient --------- */
+  --sk-bevel: inset 0 1px 0 var(--sk-hi), inset 0 -1px 0 var(--sk-lo);
+  --sk-bevel-strong:
+    inset 0 1px 0 var(--sk-hi),
+    inset 0 -2px 2px rgba(45, 38, 28, 0.13),
+    inset 1px 0 0 var(--sk-hi-soft),
+    inset -1px 0 0 var(--sk-lo);
 
-  --pw-ease: var(--ease-pw);
+  /* --- recess: anything milled INTO its parent --------------------------- */
+  --sk-inset:
+    inset 0 2px 4px rgba(45, 38, 28, 0.22),
+    inset 0 1px 1px rgba(45, 38, 28, 0.3),
+    0 1px 0 var(--sk-hi);
+  --sk-inset-deep:
+    inset 0 3px 8px rgba(20, 16, 10, 0.4),
+    inset 0 1px 2px rgba(20, 16, 10, 0.5),
+    0 1px 0 var(--sk-hi);
 
-  /* Grid: 12 / 24 / 32 desktop. GridOverlay reads the same three values, so
-     the visible rule columns and the content columns can never disagree. */
-  --pw-cols: 12;
-  --pw-gutter: 24px;
-  --pw-margin: 32px;
-  --pw-shell: var(--container-pw-shell);
-}
+  /* --- materials --------------------------------------------------------- */
+  --sk-card: linear-gradient(180deg, #FFFDF9 0%, #F7F4EE 52%, #EFEBE2 100%);
+  --sk-paper: linear-gradient(180deg, #EFEBE3 0%, #E5E0D6 100%);
+  --sk-steel: linear-gradient(180deg, #E4E0D6 0%, #CFC9BC 48%, #BDB6A6 100%);
+  --sk-slate: linear-gradient(180deg, #3A3F46 0%, #272B31 55%, #1C1F23 100%);
+  --sk-accent: linear-gradient(180deg, #4C86E8 0%, #2A5FBE 48%, #1B4596 100%);
+  --sk-accent-press: linear-gradient(180deg, #1B4596 0%, #2A5FBE 60%, #3E74D4 100%);
+  --sk-brass: linear-gradient(180deg, #E6C982 0%, #C9A458 45%, #9C7C36 100%);
+  --sk-glass: linear-gradient(180deg, rgba(247, 244, 238, 0.93) 0%, rgba(240, 236, 228, 0.86) 55%, rgba(233, 229, 221, 0.82) 100%);
 
-@media (max-width: 767px) {
-  :root {
-    --pw-cols: 4;
-    --pw-gutter: 16px;
-    --pw-margin: 16px;
-  }
+  /* Fine grain. Keep it near-invisible — texture you can actually see is
+     texture that dates. feTurbulence is cheap and needs no asset. */
+  --sk-grain: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+
+  /* Brushed metal: sub-pixel vertical striation. */
+  --sk-brushed: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0px,
+    rgba(255, 255, 255, 0.05) 1px,
+    rgba(0, 0, 0, 0.028) 1px,
+    rgba(0, 0, 0, 0.028) 2px
+  );
+
+  --sk-radius: 10px;
+  --sk-radius-sm: 6px;
+  --sk-radius-lg: 16px;
+
+  /* Physical easing: mass settles, it does not snap. */
+  --sk-ease: cubic-bezier(0.2, 0.8, 0.3, 1);
+  --sk-ease-press: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* --- base ----------------------------------------------------------------- */
 @layer base {
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
-    /* Contract: border-radius 0. Everywhere. Enforced here so no component
-       can reintroduce a radius by accident. */
-    border-radius: 0;
-  }
+  *, *::before, *::after { box-sizing: border-box; }
 
-  html {
-    -webkit-text-size-adjust: 100%;
-  }
+  html { -webkit-text-size-adjust: 100%; }
 
   body {
     margin: 0;
-    background-color: var(--pw-bg);
-    color: var(--pw-ink);
+    color: var(--color-pw-ink);
     font-family: var(--font-sans);
-    font-size: 18px;
-    line-height: 1.55;
+    font-size: 17px;
+    line-height: 1.6;
+    background-color: var(--color-pw-paper);
+    background-image:
+      radial-gradient(120% 70% at 50% -10%, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0) 60%),
+      var(--sk-paper);
+    /* Deliberately NOT background-attachment: fixed. A fixed background
+       repaints the whole viewport on every scroll frame, and combined with
+       the grain layer and the nav's backdrop-filter it was enough to stall
+       the compositor. The gradient is broad enough that scrolling it costs
+       nothing visually. */
+    background-repeat: no-repeat;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Display type is allowed to crop off the right edge; the page is not
-       allowed to scroll sideways because of it. */
     overflow-x: clip;
   }
 
-  h1, h2, h3, h4, h5, h6, p, figure, blockquote {
-    margin: 0;
+  /* One grain layer over the whole document rather than per-surface. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background-image: var(--sk-grain);
+    /* No mix-blend-mode: blending a fixed full-viewport layer forces a
+       composite of the entire screen every frame. Plain alpha at a lower
+       opacity reads the same and costs nothing. */
+    opacity: 0.09;
   }
 
-  ul, ol {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
+  h1, h2, h3, h4, h5, h6, p, figure, blockquote, dl, dd { margin: 0; }
+  ul, ol { margin: 0; padding: 0; list-style: none; }
+  a { color: inherit; text-decoration: none; }
+  img, svg, video { display: block; max-width: 100%; }
+  button { font: inherit; color: inherit; background: none; border: none; padding: 0; cursor: pointer; }
 
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  img, svg, video {
-    display: block;
-    max-width: 100%;
-  }
-
-  button {
-    font: inherit;
-    color: inherit;
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-  }
-
-  /* One focus treatment on every interactive element. Square, like the rest. */
   :focus-visible {
-    outline: 3px solid var(--pw-ink);
-    outline-offset: 3px;
-    border-radius: 0;
+    outline: 2px solid var(--color-pw-accent-lit);
+    outline-offset: 2px;
+    border-radius: var(--sk-radius-sm);
   }
 
-  ::selection {
-    background-color: var(--pw-accent);
-    color: var(--pw-bg);
-  }
+  ::selection { background-color: rgba(59, 118, 220, 0.3); }
 }
 
-/* --- type ----------------------------------------------------------------- */
 @layer components {
-  .pw-display-xxl {
-    font-size: clamp(64px, 13vw, 220px);
-    font-weight: 900;
-    letter-spacing: -0.05em;
-    line-height: 0.85;
-    color: var(--pw-ink);
-  }
+  /* ======================= type ========================================== */
 
-  .pw-display {
-    font-size: clamp(48px, 8vw, 128px);
-    font-weight: 800;
-    letter-spacing: -0.04em;
-    line-height: 0.9;
-    color: var(--pw-ink);
-  }
-
-  .pw-heading {
-    font-size: clamp(28px, 3.5vw, 48px);
-    font-weight: 700;
+  .sk-display {
+    font-family: var(--font-display);
+    font-size: clamp(40px, 5.4vw, 76px);
+    font-weight: 600;
+    line-height: 1.04;
     letter-spacing: -0.02em;
-    line-height: 1.05;
-    color: var(--pw-ink);
+    color: var(--color-pw-ink);
+    /* Engraved: the light edge falls BELOW the stroke. */
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.85), 0 -1px 1px rgba(45, 38, 28, 0.1);
   }
 
-  .pw-body {
-    font-size: 18px;
-    font-weight: 400;
-    line-height: 1.55;
-    color: var(--pw-ink-dim);
-    max-width: 60ch;
+  .sk-heading {
+    font-family: var(--font-display);
+    font-size: clamp(26px, 2.8vw, 40px);
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.015em;
+    color: var(--color-pw-ink);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
   }
 
-  /* JetBrains Mono. Labels, captions, every number in a product mock. */
-  .pw-mono {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    font-weight: 500;
-    line-height: 1.2;
+  .sk-title {
+    font-family: var(--font-sans);
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--color-pw-ink);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
+  }
+
+  .sk-body {
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--color-pw-ink-soft);
+    max-width: 62ch;
+  }
+
+  /* Engraved label, as stamped into a plate. */
+  .sk-label {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.1em;
+    color: var(--color-pw-ink-faint);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
   }
 
-  /* Mono figures that are NOT labels: no uppercase, no letter-spacing, and
-     tabular so columns of numbers line up. Size is set by the caller. */
-  .pw-num {
+  /* On a dark material the light source flips: shadow goes ABOVE. */
+  .sk-label-dark {
+    color: rgba(255, 255, 255, 0.62);
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.7);
+  }
+
+  .sk-readout {
     font-family: var(--font-mono);
-    font-weight: 500;
     font-variant-numeric: tabular-nums;
-    line-height: 1;
+    font-weight: 500;
+    letter-spacing: -0.01em;
   }
 
-  /* Outlined section numeral: display size, no fill, 2px ink stroke. */
-  .pw-numeral {
-    font-size: clamp(48px, 8vw, 128px);
-    font-weight: 800;
-    letter-spacing: -0.04em;
-    line-height: 0.9;
-    color: transparent;
-    -webkit-text-stroke: 2px var(--pw-ink);
+  /* Numerals on a dark readout, with a faint phosphor bloom. */
+  .sk-readout-lit {
+    color: #EFE6CF;
+    text-shadow: 0 0 12px rgba(224, 192, 120, 0.42), 0 1px 0 rgba(0, 0, 0, 0.55);
   }
 
-  /* --- grid --------------------------------------------------------------- */
+  .sk-emboss {
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.55), 0 1px 0 rgba(255, 255, 255, 0.14);
+  }
 
-  /* The outer container. Capped at 1440px and centred; GridOverlay uses the
-     identical rule so the fixed overlay registers with page content. */
-  .pw-shell {
+  /* ======================= surfaces ====================================== */
+
+  .sk-shell {
     width: 100%;
-    max-width: var(--pw-shell);
+    max-width: var(--container-pw-shell);
     margin-inline: auto;
-    padding-inline: var(--pw-margin);
+    padding-inline: 24px;
   }
 
-  .pw-grid {
-    display: grid;
-    grid-template-columns: repeat(var(--pw-cols), minmax(0, 1fr));
-    column-gap: var(--pw-gutter);
+  @media (min-width: 768px) {
+    .sk-shell { padding-inline: 40px; }
   }
 
-  /* --- motion: mechanical vocabulary -------------------------------------- */
+  /* A raised card of warm stock. The workhorse. */
+  .sk-panel {
+    position: relative;
+    background-image: var(--sk-card);
+    border-radius: var(--sk-radius);
+    box-shadow: var(--sk-bevel), var(--sk-raise);
+  }
 
-  /* 100ms linear. The ONLY transition allowed on buttons, links and hovers. */
-  .pw-mech {
+  .sk-panel-lg {
+    position: relative;
+    background-image: var(--sk-card);
+    border-radius: var(--sk-radius-lg);
+    box-shadow: var(--sk-bevel), var(--sk-raise-lg);
+  }
+
+  /* Brushed aluminium. Striation rides on top via ::after. */
+  .sk-metal {
+    position: relative;
+    background-image: var(--sk-steel);
+    border-radius: var(--sk-radius);
+    box-shadow: var(--sk-bevel-strong), var(--sk-raise);
+  }
+
+  .sk-metal::after,
+  .sk-slate::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-image: var(--sk-brushed);
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  .sk-slate {
+    position: relative;
+    background-image: var(--sk-slate);
+    border-radius: var(--sk-radius);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.14),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.6),
+      var(--sk-raise);
+  }
+
+  /* A well: anything cut INTO its parent. */
+  .sk-well {
+    background-image: linear-gradient(180deg, #E2DDD2 0%, #EDE9E1 100%);
+    border-radius: var(--sk-radius-sm);
+    box-shadow: var(--sk-inset);
+  }
+
+  .sk-well-dark {
+    background-image: linear-gradient(180deg, #14171A 0%, #1F2429 100%);
+    border-radius: var(--sk-radius-sm);
+    box-shadow: var(--sk-inset-deep);
+  }
+
+  .sk-glass {
+    background-image: var(--sk-glass);
+    backdrop-filter: blur(12px) saturate(140%);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    /* Promote to its own layer so the blur is not recomputed against the
+       whole page on every scroll frame. */
+    will-change: backdrop-filter;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.95),
+      inset 0 -1px 0 rgba(45, 38, 28, 0.12),
+      var(--sk-raise-sm);
+  }
+
+  /* A milled groove — the divider. Two 1px lines, dark then light. */
+  .sk-groove {
+    height: 2px;
+    background-image: linear-gradient(
+      180deg,
+      rgba(45, 38, 28, 0.16) 0 1px,
+      rgba(255, 255, 255, 0.85) 1px 2px
+    );
+    border: 0;
+  }
+
+  .sk-groove-dark {
+    height: 2px;
+    background-image: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.55) 0 1px,
+      rgba(255, 255, 255, 0.09) 1px 2px
+    );
+    border: 0;
+  }
+
+  /* ======================= full-bleed bands =============================== */
+
+  /* A shallow recess milled into the page stock. Used to alternate specimen
+     blocks without introducing a second paper colour. */
+  .sk-band-sunk {
+    background-image: linear-gradient(180deg, #E1DCD1 0%, #E8E4DB 14%, #E8E4DB 86%, #DFDAD0 100%);
+    box-shadow:
+      inset 0 3px 6px -3px rgba(45, 38, 28, 0.3),
+      inset 0 -3px 6px -3px rgba(45, 38, 28, 0.22),
+      inset 0 1px 0 rgba(45, 38, 28, 0.12),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.7);
+  }
+
+  .sk-band-slate {
+    background-image: var(--sk-slate);
+    box-shadow:
+      inset 0 2px 5px rgba(0, 0, 0, 0.55),
+      inset 0 1px 0 rgba(255, 255, 255, 0.11),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.07);
+  }
+
+  .sk-band-slate::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: var(--sk-brushed);
+    /* Far lower than on a small part: the same striation that reads as
+       brushed metal on a 300px panel reads as corduroy across a full band. */
+    opacity: 0.22;
+  }
+
+  /* Blue enamel. The base is nearly flat — a full-height gradient across a
+     band this tall reads as a SaaS hero, not as paint. The gloss is confined
+     to the top ~170px, which is where a highlight would actually fall. */
+  .sk-band-accent {
+    background-image:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0px, rgba(255, 255, 255, 0.06) 90px, rgba(255, 255, 255, 0) 175px),
+      linear-gradient(180deg, #2E63C4 0%, #27559F 100%);
+    box-shadow:
+      inset 0 2px 5px rgba(10, 25, 60, 0.45),
+      inset 0 1px 0 rgba(255, 255, 255, 0.33),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  /* ======================= controls ====================================== */
+
+  .sk-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    border-radius: var(--sk-radius);
+    font-family: var(--font-sans);
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    white-space: nowrap;
     transition:
-      transform 100ms linear,
-      box-shadow 100ms linear,
-      background-color 100ms linear,
-      border-color 100ms linear,
-      color 100ms linear;
+      transform 90ms var(--sk-ease-press),
+      box-shadow 90ms var(--sk-ease-press),
+      filter 140ms var(--sk-ease);
   }
 
-  /* Press: the element moves into its own shadow. */
-  .pw-press {
-    box-shadow: var(--pw-shadow);
+  .sk-btn-primary {
+    background-image: var(--sk-accent);
+    color: #fff;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.35);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.45),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+      0 1px 1px rgba(20, 35, 70, 0.3),
+      0 5px 14px rgba(20, 40, 90, 0.3);
   }
 
-  .pw-press:active {
-    transform: translate(3px, 3px);
-    box-shadow: var(--pw-shadow-sm);
+  .sk-btn-primary:hover { filter: brightness(1.07); }
+
+  .sk-btn-primary:active {
+    background-image: var(--sk-accent-press);
+    transform: translateY(1px);
+    box-shadow:
+      inset 0 2px 5px rgba(10, 25, 60, 0.55),
+      inset 0 1px 0 rgba(0, 0, 0, 0.18),
+      0 1px 0 rgba(255, 255, 255, 0.4);
   }
 
-  /* --- voice capture ------------------------------------------------------ */
+  .sk-btn-secondary {
+    background-image: linear-gradient(180deg, #FFFDF9 0%, #EEEAE1 100%);
+    color: var(--color-pw-ink);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.95),
+      inset 0 -1px 0 rgba(45, 38, 28, 0.16),
+      inset 0 0 0 1px rgba(45, 38, 28, 0.1),
+      var(--sk-raise-sm);
+  }
 
-  /* Bars are sized statically from the fixture; the animation only scales
-     them, so the reduced-motion / no-JS state is the correct static image.
-     transform-box makes transform-origin resolve against the rect itself. */
-  .pw-wave-bar {
-    transform-box: fill-box;
-    transform-origin: 50% 50%;
+  .sk-btn-secondary:hover { filter: brightness(1.02); }
+
+  .sk-btn-secondary:active {
+    transform: translateY(1px);
+    box-shadow:
+      inset 0 2px 4px rgba(45, 38, 28, 0.26),
+      inset 0 0 0 1px rgba(45, 38, 28, 0.12);
+  }
+
+  /* A physical chip that can be on or off. */
+  .sk-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 500;
+    background-image: linear-gradient(180deg, #F6F3EC 0%, #E7E2D8 100%);
+    color: var(--color-pw-ink-soft);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      inset 0 0 0 1px rgba(45, 38, 28, 0.09),
+      0 1px 2px rgba(45, 38, 28, 0.1);
+  }
+
+  .sk-chip-on {
+    background-image: var(--sk-accent);
+    color: #fff;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.4),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+      0 1px 3px rgba(20, 40, 90, 0.35);
+  }
+
+  .sk-chip-off {
+    background-image: linear-gradient(180deg, #E8E4DA 0%, #DDD8CC 100%);
+    color: var(--color-pw-ink-faint);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+    box-shadow:
+      inset 0 1px 3px rgba(45, 38, 28, 0.16),
+      inset 0 0 0 1px rgba(45, 38, 28, 0.07);
+  }
+
+  /* Indicator lamp. */
+  .sk-led {
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    background-image: radial-gradient(circle at 34% 30%, #7FE39A 0%, #34A85A 54%, #1C7038 100%);
+    box-shadow:
+      0 0 7px rgba(52, 200, 110, 0.75),
+      inset 0 1px 0 rgba(255, 255, 255, 0.6),
+      inset 0 -1px 1px rgba(0, 0, 0, 0.35);
+  }
+
+  .sk-led-amber {
+    background-image: radial-gradient(circle at 34% 30%, #FFD98A 0%, #D99A29 54%, #8F6415 100%);
+    box-shadow:
+      0 0 7px rgba(217, 154, 41, 0.7),
+      inset 0 1px 0 rgba(255, 255, 255, 0.55),
+      inset 0 -1px 1px rgba(0, 0, 0, 0.35);
+  }
+
+  /* Brass plaque, for the few places carrying a stamped mark. */
+  .sk-brass {
+    background-image: var(--sk-brass);
+    border-radius: var(--sk-radius-sm);
+    color: #3A2B0C;
+    text-shadow: 0 1px 0 rgba(255, 240, 200, 0.55);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 246, 214, 0.75),
+      inset 0 -1px 0 rgba(70, 50, 10, 0.5),
+      var(--sk-raise-sm);
+  }
+
+  /* A screw head. Heaviest hardware only — two per panel, never four. */
+  .sk-screw {
+    width: 11px;
+    height: 11px;
+    border-radius: 999px;
+    background-image:
+      linear-gradient(180deg, rgba(0, 0, 0, 0.42) 0 1px, rgba(255, 255, 255, 0) 1px),
+      radial-gradient(circle at 36% 30%, #F0EDE5 0%, #BDB7A9 62%, #948E80 100%);
+    box-shadow:
+      inset 0 -1px 1px rgba(255, 255, 255, 0.5),
+      inset 0 1px 2px rgba(0, 0, 0, 0.35),
+      0 1px 0 rgba(255, 255, 255, 0.6);
   }
 }
 
-/* Stepped, not smooth: the meter ticks like hardware rather than easing like
-   a UI library. Declared only when motion is welcome, so the reduce branch
-   never has an animation to cancel. */
+/* ======================= voice capture ================================== */
+
+/* Bars are sized statically from the fixture, so the reduced-motion and
+   pre-hydration state is the correct static image; the animation only scales
+   them. transform-box makes transform-origin resolve against the rect. */
+.sk-wave-bar {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+}
+
+/* Stepped, not eased: the meter ticks like hardware. Declared only where
+   motion is welcome, so the reduce branch has nothing to cancel. */
 @media (prefers-reduced-motion: no-preference) {
-  .pw-wave-bar {
-    animation: pw-wave 1100ms steps(3, end) infinite alternate;
+  .sk-wave-bar {
+    animation: sk-wave 1100ms steps(3, end) infinite alternate;
   }
 
-  .pw-caret {
-    animation: pw-caret 1000ms steps(1, end) infinite;
+  .sk-caret {
+    animation: sk-caret 1000ms steps(1, end) infinite;
   }
 }
 
-@keyframes pw-wave {
-  from { transform: scaleY(0.28); }
+@keyframes sk-wave {
+  from { transform: scaleY(0.3); }
   to   { transform: scaleY(1); }
 }
 
-@keyframes pw-caret {
+@keyframes sk-caret {
   0%, 49%   { opacity: 1; }
   50%, 100% { opacity: 0; }
 }
 
-/* --- reduced motion ------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     transition-duration: 0.01ms !important;
-    transition-delay: 0ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;

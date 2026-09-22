@@ -11,6 +11,13 @@
 /* Site                                                                       */
 /* -------------------------------------------------------------------------- */
 
+export const HERO = {
+  /** Engraved plate above the headline. */
+  kicker: "Canadian immigration",
+  headline: "Every pathway to Canada, on one instrument panel.",
+  body: "One profile, checked against every federal, provincial and territorial program, with every Express Entry draw since 2015 recorded beside it.",
+} as const;
+
 export const SITE = {
   name: "Pathways",
   appUrl: "https://app.pathways.xx",

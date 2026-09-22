@@ -1,78 +1,76 @@
-import { HalftoneField } from "@/components/hero/HalftoneField";
+import { ArrowRight, ShieldCheck } from "lucide-react";
+
+import { MissionControlCard } from "@/components/product/MissionControlCard";
 import { Button } from "@/components/ui/Button";
-import { Section } from "@/components/ui/Section";
-import { SITE } from "@/lib/fixtures";
+import { MonoLabel } from "@/components/ui/MonoLabel";
+import { HERO, SITE } from "@/lib/fixtures";
 
-/* ---------------------------------------------------------------------------
-   Hero — a Server Component. No "use client" here, and none below it except
-   HalftoneField itself.
-
-   The three overlay lines are plain server-rendered HTML. Their visibility is
-   pure CSS: HalftoneField writes --p on its wrapper once per frame, and each
-   line multiplies a rising ramp by a falling ramp to cut its own window out of
-   that value. No state, no effect, no hydration cost.
-
-   Ramp rate is 12, i.e. each fade edge is 1/12 ≈ 0.083 of the scroll. The
-   windows are spaced so a line is fully out before the next begins.
---------------------------------------------------------------------------- */
-
-type OverlayLine = {
-  text: string;
-  /** Opacity reaches 1 at `in` + 1/12 and returns to 0 at `out`. */
-  in: number;
-  out: number;
-};
-
-const RAMP = 12;
-
-const LINES: readonly OverlayLine[] = [
-  { text: "107 pathways.", in: 0.05, out: 0.33 },
-  { text: "One profile.", in: 0.36, out: 0.62 },
-  { text: "Your 3.", in: 0.65, out: 0.97 },
-];
-
-function opacityWindow(line: OverlayLine): string {
-  return `calc(clamp(0, (var(--p) - ${line.in}) * ${RAMP}, 1) * clamp(0, (${line.out} - var(--p)) * ${RAMP}, 1))`;
-}
-
+/**
+ * The hero is a static composition — there is no pinned scroll sequence and
+ * nothing appears on scroll. The product does the talking: a real enclosure,
+ * sitting on the page with a contact shadow, tilted very slightly so it reads
+ * as an object photographed on a desk rather than a screenshot pasted flat.
+ *
+ * Server Component. Nothing on this page needs client JavaScript.
+ */
 export function Hero() {
   return (
-    <header aria-labelledby="hero-heading">
-      <HalftoneField>
-        {/* Decorative: the sequence restates the h1 below, and reduced-motion
-            readers never see it at all, so it must not carry unique meaning. */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 flex items-center motion-reduce:hidden"
-        >
-          <div className="pw-shell">
-            <div className="relative">
-              {LINES.map((line, index) => (
-                <p
-                  key={line.text}
-                  className={`pw-display-xxl ${index === 0 ? "" : "absolute inset-0"}`}
-                  style={{ opacity: opacityWindow(line) }}
-                >
-                  {line.text}
-                </p>
-              ))}
-            </div>
-          </div>
-        </div>
-      </HalftoneField>
+    <header
+      aria-labelledby="hero-heading"
+      className="relative overflow-x-clip pt-14 pb-20 md:pt-20 md:pb-28"
+    >
+      {/* The light. A broad soft source above and behind the panel, plus a
+          warm bounce at the bottom so the page does not fall off into grey. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_55%_at_62%_0%,rgba(255,255,255,0.95)_0%,rgba(255,255,255,0)_70%),radial-gradient(50%_40%_at_10%_100%,rgba(214,196,160,0.28)_0%,rgba(214,196,160,0)_70%)]"
+      />
 
-      <Section as="div" grid>
-        <div className="col-span-4 md:col-span-9">
-          <h1 id="hero-heading" className="pw-display">
-            Canadian immigration, mapped to your file.
+      <div className="sk-shell relative grid grid-cols-4 items-center gap-x-6 gap-y-14 md:grid-cols-12">
+        <div className="col-span-4 md:col-span-6 lg:col-span-6">
+          <span className="sk-brass inline-flex items-center gap-2 px-3 py-1.5">
+            <ShieldCheck size={13} strokeWidth={2.5} aria-hidden="true" />
+            <MonoLabel className="!text-[#3A2B0C] !opacity-100 [text-shadow:0_1px_0_rgba(255,240,200,0.55)]">
+              {HERO.kicker}
+            </MonoLabel>
+          </span>
+
+          <h1 id="hero-heading" className="sk-display mt-6 max-w-[14ch]">
+            {HERO.headline}
           </h1>
-          <div className="mt-12 md:mt-16">
-            <Button href={SITE.appUrl} variant="primary" size="lg">
-              {SITE.ctaLabel}
+
+          <p className="sk-body mt-6 max-w-[54ch]">{HERO.body}</p>
+
+          <div className="mt-9 flex flex-wrap items-center gap-3">
+            <Button
+              href={SITE.appUrl}
+              variant="primary"
+              size="lg"
+              trailing={<ArrowRight size={17} strokeWidth={2.5} />}
+            >
+              Try it out
+            </Button>
+            <Button href="#specimen-voice" variant="secondary" size="lg">
+              See how it works
             </Button>
           </div>
         </div>
-      </Section>
+
+        {/* The product shot. */}
+        <div className="col-span-4 md:col-span-6 lg:col-span-6">
+          <div className="relative mx-auto w-full max-w-[520px] [perspective:1600px]">
+            {/* Contact shadow on the desk, separate from the panel's own
+                ambient shadow — a single shadow always reads as a sticker. */}
+            <div
+              aria-hidden="true"
+              className="absolute inset-x-10 bottom-[-26px] h-12 rounded-[999px] bg-[radial-gradient(ellipse_at_center,rgba(45,38,28,0.34)_0%,rgba(45,38,28,0)_72%)] blur-[6px]"
+            />
+            <div className="relative [transform:rotateY(-7deg)_rotateX(2deg)]">
+              <MissionControlCard />
+            </div>
+          </div>
+        </div>
+      </div>
     </header>
   );
 }

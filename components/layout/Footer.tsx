@@ -10,18 +10,12 @@ import {
   SITE,
 } from "@/lib/fixtures";
 
-/**
- * Both computed once at module scope, on the server. Nothing here is derived
- * during render, so there is no clock to disagree about and no hydration
- * mismatch. The formatter is pinned to a locale and to UTC for the same
- * reason — the machine's timezone must not change the printed date.
- */
+/** Computed at module scope on the server — no hydration mismatch. */
 const YEAR = new Date().getFullYear();
 
+/** Pinned to UTC so the printed day cannot shift with the server's zone. */
 const LAST_UPDATED = new Intl.DateTimeFormat("en-CA", {
-  year: "numeric",
-  month: "long",
-  day: "numeric",
+  dateStyle: "long",
   timeZone: "UTC",
 }).format(new Date(DRAW_SUMMARY_FALLBACK.lastUpdatedIso));
 
@@ -31,54 +25,48 @@ const LEGAL_LINKS: readonly { href: string; label: string }[] = [
 ];
 
 /**
- * The colophon.
- *
- * White, one 2px ink rule along the top, and every word of it in JetBrains
- * Mono at 12px on the 12-column grid: the regulatory boundary on the left,
- * where the numbers come from in the middle, the legal routes on the right.
- *
- *   cols  1–6  DISCLAIMER, verbatim from lib/fixtures — never paraphrased
- *   cols  7–9  DATA_SOURCE_NOTE and the date of the last draw ingest
- *   cols 10–12 legal links, the privacy posture, copyright
- *
- * Below 768px the grid drops to 4 columns, every block spans all four, and
- * they stack in that same reading order.
+ * The colophon, set on slate. Text embosses out of the metal here — light
+ * type with the shadow above it — because the light source has not moved
+ * just because the material got darker.
  */
 export function Footer() {
   return (
     <Section
       as="footer"
-      topRule
+      bg="slate"
+      pad="default"
       grid
-      innerClassName="gap-y-12"
-      aria-label="Site colophon"
+      innerClassName="gap-y-10"
+      aria-label="Site footer"
     >
-      {/* cols 1–6 — the regulatory boundary, word for word. */}
       <div className="col-span-4 md:col-span-6">
-        <MonoLabel as="p" className="leading-relaxed">
+        <span className="font-display text-[20px] font-semibold tracking-[-0.02em] text-white/90 [text-shadow:0_-1px_0_rgba(0,0,0,0.6)]">
+          {SITE.name}
+        </span>
+        <p className="mt-4 max-w-[52ch] text-[13.5px] leading-relaxed text-white/55 [text-shadow:0_-1px_0_rgba(0,0,0,0.55)]">
           {DISCLAIMER}
-        </MonoLabel>
+        </p>
       </div>
 
-      {/* cols 7–9 — provenance. */}
-      <div className="col-span-4 flex flex-col gap-4 md:col-span-3">
-        <MonoLabel as="p" tone="dim" className="leading-relaxed">
+      <div className="col-span-4 md:col-span-3">
+        <MonoLabel tone="dark">Sources</MonoLabel>
+        <p className="mt-3 text-[13.5px] leading-relaxed text-white/55 [text-shadow:0_-1px_0_rgba(0,0,0,0.55)]">
           {DATA_SOURCE_NOTE}
-        </MonoLabel>
-        <MonoLabel as="p" className="leading-relaxed">
+        </p>
+        <p className="sk-readout mt-4 text-[12px] text-white/70">
           Draw data last updated {LAST_UPDATED}
-        </MonoLabel>
+        </p>
       </div>
 
-      {/* cols 10–12 — routes out, then the small print. */}
-      <div className="col-span-4 flex flex-col gap-4 md:col-span-3">
-        <nav aria-label="Legal">
+      <div className="col-span-4 md:col-span-3">
+        <MonoLabel tone="dark">Legal</MonoLabel>
+        <nav aria-label="Legal" className="mt-3">
           <ul className="flex flex-col gap-2">
             {LEGAL_LINKS.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="pw-mono pw-mech text-pw-ink hover:text-pw-accent"
+                  className="text-[13.5px] text-white/70 transition-colors duration-150 hover:text-white [text-shadow:0_-1px_0_rgba(0,0,0,0.55)]"
                 >
                   {link.label}
                 </Link>
@@ -86,12 +74,12 @@ export function Footer() {
             ))}
           </ul>
         </nav>
-        <MonoLabel as="p" tone="dim" className="leading-relaxed">
+        <p className="mt-4 max-w-[34ch] text-[13.5px] leading-relaxed text-white/55 [text-shadow:0_-1px_0_rgba(0,0,0,0.55)]">
           {PRIVACY_POSTURE}
-        </MonoLabel>
-        <MonoLabel as="p" tone="dim">
+        </p>
+        <p className="sk-readout mt-4 text-[12px] text-white/45">
           © {YEAR} {SITE.name}
-        </MonoLabel>
+        </p>
       </div>
     </Section>
   );

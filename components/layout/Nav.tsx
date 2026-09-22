@@ -1,45 +1,40 @@
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
 import { MonoLabel } from "@/components/ui/MonoLabel";
-import { Section } from "@/components/ui/Section";
 import { SITE } from "@/lib/fixtures";
 
 /**
- * The whole navigation: a wordmark, one mono qualifier, one button.
- *
- * There is no menu and no secondary link — the page is a single sequence, so
- * a nav that offers destinations would be lying about the structure. The bar
- * is not sticky; it is a masthead, and it scrolls away like one.
- *
- * The 2px ink bottom border is the first structural rule on the page. Padding
- * comes from Section (pad="flush" + a fixed bar height), never from here.
+ * A frosted glass rail that floats over the page stock. It is sticky, so the
+ * blur has something to do: content passing underneath is what makes the
+ * material read as glass rather than as a pale rectangle.
  */
 export function Nav() {
   return (
-    <Section
-      as="header"
-      pad="flush"
-      className="border-b-2 border-pw-ink"
-      aria-label="Masthead"
-    >
-      <div className="flex h-20 items-center justify-between gap-4">
-        {/* Wraps instead of clipping on very narrow viewports: the qualifier
-            drops under the wordmark rather than colliding with the button. */}
-        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-          <Link
-            href="/"
-            className="text-[20px] font-black uppercase tracking-[-0.02em] text-pw-ink md:text-[22px]"
-          >
-            {SITE.name}
+    <header className="sticky top-0 z-50">
+      <div className="sk-glass relative">
+        <div className="sk-shell flex h-[68px] items-center justify-between gap-4">
+          <Link href="/" className="flex items-baseline gap-3">
+            <span className="font-display text-[22px] font-semibold tracking-[-0.02em] text-pw-ink [text-shadow:0_1px_0_rgba(255,255,255,0.9)]">
+              {SITE.name}
+            </span>
+            <span className="hidden sm:block">
+              <MonoLabel tone="dim">For Canada</MonoLabel>
+            </span>
           </Link>
-          <MonoLabel tone="dim">For Canada</MonoLabel>
-        </div>
 
-        <Button href={SITE.appUrl} variant="primary" size="md">
-          {SITE.ctaLabel}
-        </Button>
+          <Button
+            href={SITE.appUrl}
+            variant="primary"
+            size="md"
+            trailing={<ArrowRight size={15} strokeWidth={2.5} />}
+          >
+            Try it out
+          </Button>
+        </div>
+        <div aria-hidden="true" className="sk-groove absolute inset-x-0 bottom-0" />
       </div>
-    </Section>
+    </header>
   );
 }

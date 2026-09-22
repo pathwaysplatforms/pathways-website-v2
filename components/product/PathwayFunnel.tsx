@@ -2,60 +2,55 @@ import { PathwayChip } from "@/components/product/PathwayChip";
 import { Frame } from "@/components/ui/Frame";
 import { MonoLabel } from "@/components/ui/MonoLabel";
 import type { Pathway } from "@/lib/fixtures";
-import {
-  DRAW_SUMMARY_FALLBACK,
-  EXAMPLE_PROFILE,
-  PATHWAYS,
-} from "@/lib/fixtures";
+import { DRAW_SUMMARY_FALLBACK, EXAMPLE_PROFILE, PATHWAYS } from "@/lib/fixtures";
 
 type PathwayFunnelProps = {
   pathways?: readonly Pathway[];
-  /** Total pathways mapped across federal, provincial and territorial. */
   totalMapped?: number;
   className?: string;
 };
 
 /**
- * The matching screen, frozen: every mapped pathway checked at once, three
- * still open. Static — the funnel does not animate, it is already resolved.
- *
- * Inside the Frame every divider is a 1px hairline. The one accent value is
- * the count of open pathways; matched chips are ink, eliminated chips are
- * hairline.
+ * The matching screen, resolved: every mapped pathway checked at once, three
+ * still open. The two counts sit in the rail as instrument readouts; the tabs
+ * below carry the result in relief.
  */
 export function PathwayFunnel({
   pathways = PATHWAYS,
   totalMapped = DRAW_SUMMARY_FALLBACK.pathwaysMapped,
   className = "",
 }: PathwayFunnelProps) {
-  const matchedCount = pathways.filter(
-    (pathway) => pathway.status === "matched",
-  ).length;
+  const matchedCount = pathways.filter((p) => p.status === "matched").length;
 
   return (
     <Frame
       label="Pathways checked"
       note={EXAMPLE_PROFILE}
       className={className}
+      bodyClassName="!pt-0"
     >
-      <dl className="flex items-end justify-between gap-6 border-b border-pw-hairline pb-4">
-        <div>
-          <MonoLabel as="dt" tone="dim">
-            Mapped
-          </MonoLabel>
-          <dd className="pw-num mt-2 text-[32px] text-pw-ink">{totalMapped}</dd>
+      <div className="-mx-4 flex items-stretch md:-mx-6">
+        <div className="flex-1 px-4 py-4 md:px-6 md:py-5">
+          <MonoLabel tone="dim">Mapped</MonoLabel>
+          <p className="sk-readout mt-1.5 text-[30px] leading-none text-pw-ink-soft [text-shadow:0_1px_0_rgba(255,255,255,0.85)]">
+            {totalMapped}
+          </p>
         </div>
-        <div className="text-right">
-          <MonoLabel as="dt" tone="dim">
-            Open on this profile
-          </MonoLabel>
-          <dd className="pw-num mt-2 text-[32px] text-pw-accent">
+        <div
+          aria-hidden="true"
+          className="w-[2px] bg-[linear-gradient(90deg,rgba(45,38,28,0.14)_0_1px,rgba(255,255,255,0.85)_1px_2px)]"
+        />
+        <div className="flex-1 px-4 py-4 md:px-6 md:py-5">
+          <MonoLabel tone="dim">Open on this profile</MonoLabel>
+          <p className="sk-readout mt-1.5 text-[30px] leading-none text-pw-accent [text-shadow:0_1px_0_rgba(255,255,255,0.85)]">
             {matchedCount}
-          </dd>
+          </p>
         </div>
-      </dl>
+      </div>
 
-      <ul className="mt-4 flex flex-wrap gap-1.5">
+      <div aria-hidden="true" className="sk-groove -mx-4 md:-mx-6" />
+
+      <ul className="mt-5 flex flex-wrap gap-2">
         {pathways.map((pathway) => (
           <li key={pathway.id}>
             <PathwayChip name={pathway.name} status={pathway.status} />

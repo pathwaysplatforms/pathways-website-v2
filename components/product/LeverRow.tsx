@@ -1,16 +1,15 @@
+import { ChevronRight } from "lucide-react";
+
 import { Frame } from "@/components/ui/Frame";
-import { MonoLabel } from "@/components/ui/MonoLabel";
 import type { Lever } from "@/lib/fixtures";
 import { EXAMPLE_PROFILE, MISSION_CONTROL_LEVERS } from "@/lib/fixtures";
 
 type LeverRowProps = {
   /** A single next-best-action row. Defaults to the first staged lever. */
   lever?: Lever;
-  /** 1-based position, rendered as a two-digit mono index. */
-  index?: number;
-  /** "accent" marks the single highlighted figure in a mock. */
+  /** "accent" lights the delta; only the leading row gets it. */
   tone?: "ink" | "accent";
-  /** Hairline divider below the row. The last row in a list passes false. */
+  /** Milled groove beneath the row. The last row in a list passes false. */
   divider?: boolean;
   className?: string;
 };
@@ -20,54 +19,49 @@ function formatDelta(delta: number): string {
   return delta > 0 ? `+${delta}` : `${delta}`;
 }
 
-/** "1" → "01". The index is a label, not a count. */
-function formatIndex(index: number): string {
-  return index < 10 ? `0${index}` : `${index}`;
-}
-
 /**
- * One row of the next-action list: a mono index, what the person does, a
- * short mono qualifier, and the modelled CRS movement.
- *
- * Divider is a 1px hairline — the 2px rule belongs to the outside of the
- * Frame, never to a row inside it.
+ * One action row. The delta sits in its own small well, so it reads as a
+ * value the instrument is reporting rather than text someone typed.
  */
 export function LeverRow({
   lever = MISSION_CONTROL_LEVERS[0],
-  index,
   tone = "ink",
   divider = true,
   className = "",
 }: LeverRowProps) {
   return (
-    <div
-      className={[
-        "flex items-start justify-between gap-4 py-4",
-        divider ? "border-b border-pw-hairline" : "",
-        className,
-      ].join(" ")}
-    >
-      <div className="flex min-w-0 gap-4">
-        {index !== undefined ? (
-          <MonoLabel tone="dim" className="shrink-0 pt-1">
-            {formatIndex(index)}
-          </MonoLabel>
-        ) : null}
+    <>
+      <div
+        className={`flex items-center justify-between gap-4 py-3.5 ${className}`}
+      >
         <div className="min-w-0">
-          <p className="text-[15px] leading-snug text-pw-ink">{lever.label}</p>
-          <MonoLabel as="p" tone="dim" className="mt-2 block">
+          <p className="text-[14.5px] leading-snug font-medium text-pw-ink [text-shadow:0_1px_0_rgba(255,255,255,0.8)]">
+            {lever.label}
+          </p>
+          <p className="mt-0.5 text-[12.5px] leading-snug text-pw-ink-faint">
             {lever.note}
-          </MonoLabel>
+          </p>
+        </div>
+
+        <div className="flex shrink-0 items-center gap-2">
+          <span
+            className={[
+              "sk-well sk-readout px-2.5 py-1 text-[14px] leading-none",
+              tone === "accent" ? "text-pw-accent" : "text-pw-ink-soft",
+            ].join(" ")}
+          >
+            {formatDelta(lever.delta)}
+          </span>
+          <ChevronRight
+            size={15}
+            strokeWidth={2.5}
+            aria-hidden="true"
+            className="text-pw-ink-faint"
+          />
         </div>
       </div>
-      <p
-        className={`pw-num shrink-0 text-[18px] ${
-          tone === "accent" ? "text-pw-accent" : "text-pw-ink"
-        }`}
-      >
-        {formatDelta(lever.delta)}
-      </p>
-    </div>
+      {divider ? <div aria-hidden="true" className="sk-groove" /> : null}
+    </>
   );
 }
 
@@ -76,30 +70,30 @@ type LeverListProps = {
   className?: string;
 };
 
-/**
- * The next-action list on its own, as specimen 04 shows it. The first row
- * carries the one accent figure in the mock; the rest are ink.
- */
+/** Specimen 04's mock: the actions lifted out of the standing panel. */
 export function LeverList({
   levers = MISSION_CONTROL_LEVERS,
   className = "",
 }: LeverListProps) {
   return (
-    <Frame label="Next actions" note={EXAMPLE_PROFILE} className={className}>
+    <Frame
+      label="Next actions"
+      note={EXAMPLE_PROFILE}
+      className={className}
+      bodyClassName="!py-2"
+    >
       <ul>
-        {levers.map((lever, position) => (
+        {levers.map((lever, index) => (
           <li key={lever.id}>
             <LeverRow
               lever={lever}
-              index={position + 1}
-              tone={position === 0 ? "accent" : "ink"}
-              divider={position < levers.length - 1}
-              className={position === 0 ? "pt-0" : ""}
+              tone={index === 0 ? "accent" : "ink"}
+              divider={index < levers.length - 1}
             />
           </li>
         ))}
       </ul>
-      <p className="mt-4 border-t border-pw-hairline pt-4 text-[13px] leading-snug text-pw-ink-dim">
+      <p className="mt-3 pt-3 text-[12.5px] leading-snug text-pw-ink-faint">
         Each figure is what the action would change about this file.
       </p>
     </Frame>

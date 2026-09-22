@@ -1,38 +1,31 @@
 type RuleProps = {
-  /** "horizontal" (default) spans width; "vertical" spans height. */
   orientation?: "horizontal" | "vertical";
-  /**
-   * "ink" (default) — 2px structural rule, var(--pw-rule).
-   * "invert" — the same 2px rule in white, for use on an accent block.
-   */
-  tone?: "ink" | "invert";
+  /** "light" grooves into a pale material, "dark" into slate or enamel. */
+  tone?: "light" | "dark";
   className?: string;
 };
 
 /**
- * The structural rule: 2px, solid, ink. This is what separates BLOCKS.
- *
- * Data inside a component is separated by a 1px hairline instead — write
- * that as `border-pw-hairline` on the element itself, not with this
- * component. Thick outside, thin inside.
+ * A milled groove, not a line: one dark pixel with one light pixel beneath
+ * it, so the divider reads as a channel cut into the surface. On a dark
+ * material the order flips.
  */
 export function Rule({
   orientation = "horizontal",
-  tone = "ink",
+  tone = "light",
   className = "",
 }: RuleProps) {
-  const colour = tone === "ink" ? "border-pw-ink" : "border-pw-bg";
-
+  const base = tone === "light" ? "sk-groove" : "sk-groove-dark";
   const axis =
     orientation === "horizontal"
-      ? "w-full border-t-2"
-      : "self-stretch border-l-2";
+      ? "w-full"
+      : "h-auto w-[2px] self-stretch rotate-180 [writing-mode:vertical-lr]";
 
   return (
     <div
       role="presentation"
       aria-hidden="true"
-      className={`${axis} ${colour} ${className}`}
+      className={`${base} ${axis} ${className}`}
     />
   );
 }

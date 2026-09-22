@@ -1,46 +1,47 @@
+import { ArrowRight } from "lucide-react";
+
 import { Section } from "@/components/ui/Section";
 import { SITE } from "@/lib/fixtures";
 
 /**
- * 05 — Closing.
+ * The closing band: blue enamel with a gloss sweep across the top. The whole
+ * block is the link — the anchor paints an ::after over the positioned
+ * Section, so the entire panel is the hit target.
  *
- * A full-bleed accent band that is nothing but the call to action. The whole
- * block is the link: the anchor paints an ::after over the positioned Section,
- * so the entire coloured area is the hit target rather than just the words.
- *
- * The line is set nowrap at Display XXL and is allowed to crop off the right
- * viewport edge. Section clips overflow-x, so the page never scrolls sideways
- * because of it.
- *
- * Text on accent is ALWAYS white — .pw-display-xxl hard-sets ink, so text-pw-bg
- * has to be re-stated here. Do not remove it.
- *
- * Focus ring is the global 3px ink :focus-visible rule; it is not re-specified.
+ * On hover the arrow travels and the enamel lifts very slightly, which is the
+ * only motion in the block.
  */
 export function Closing() {
   return (
-    <Section
-      id="closing"
-      bg="accent"
-      aria-labelledby="closing-heading"
-    >
+    <Section id="closing" bg="accent" aria-labelledby="closing-heading">
       <a
         href={SITE.appUrl}
         rel="noreferrer"
-        className="group block w-max after:absolute after:inset-0"
+        className="group flex flex-col items-start gap-8 after:absolute after:inset-0 md:flex-row md:items-center md:justify-between"
       >
-        <h2
-          id="closing-heading"
-          className="pw-display-xxl text-pw-bg flex items-baseline gap-6 whitespace-nowrap md:gap-12"
-        >
-          <span>Try it out.</span>
+        <div>
+          <h2
+            id="closing-heading"
+            className="sk-emboss font-display text-[clamp(32px,4.4vw,58px)] leading-[1.06] font-semibold tracking-[-0.02em]"
+          >
+            Try it out.
+          </h2>
+          <p className="mt-3 max-w-[46ch] text-[17px] leading-relaxed text-white/75 [text-shadow:0_-1px_0_rgba(0,0,0,0.35)]">
+            Build your profile once and see where it stands against every
+            pathway and every recorded draw.
+          </p>
+        </div>
+
+        {/* A real button face sitting on the enamel, not a text link. */}
+        <span className="sk-btn sk-btn-secondary h-[54px] shrink-0 px-8 text-[16px]">
+          Open Pathways
           <span
             aria-hidden="true"
-            className="pw-mech inline-block group-hover:translate-x-3"
+            className="transition-transform duration-150 ease-[cubic-bezier(0.2,0.8,0.3,1)] group-hover:translate-x-1.5"
           >
-            →
+            <ArrowRight size={18} strokeWidth={2.5} />
           </span>
-        </h2>
+        </span>
       </a>
     </Section>
   );

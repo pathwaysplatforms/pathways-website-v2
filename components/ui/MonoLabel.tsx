@@ -2,30 +2,29 @@ import type { ElementType, ReactNode } from "react";
 
 type MonoLabelProps = {
   children: ReactNode;
-  /** Defaults to <span>. Pass "p" or "dt" where the semantics call for it. */
   as?: ElementType;
   /**
-   * "ink" (default), "dim" for secondary captions, "accent" for an active
-   * value, "invert" for white on an accent block.
+   * "ink" and "dim" engrave into a light material; "dark" and "invert" emboss
+   * out of a dark one. Picking the wrong pair is what makes a surface read as
+   * flat, so match the tone to the material underneath.
    */
-  tone?: "ink" | "dim" | "accent" | "invert";
+  tone?: "ink" | "dim" | "accent" | "dark" | "invert";
   id?: string;
   className?: string;
 };
 
 const TONE: Record<NonNullable<MonoLabelProps["tone"]>, string> = {
-  ink: "text-pw-ink",
-  dim: "text-pw-ink-dim",
-  accent: "text-pw-accent",
-  invert: "text-pw-bg",
+  ink: "sk-label",
+  dim: "sk-label opacity-75",
+  accent: "sk-label text-pw-accent",
+  dark: "sk-label sk-label-dark",
+  invert: "sk-label sk-label-dark text-white/85",
 };
 
 /**
- * JetBrains Mono, 12px / 500 / uppercase / 0.04em.
- *
- * Every label, caption, axis tick and data descriptor on this site is one of
- * these. It is NOT an eyebrow: it does not announce a section (numerals do
- * that), it names a piece of data.
+ * The engraved label: 11px, uppercase, wide-tracked, with a 1px light edge
+ * beneath it so it reads as stamped into the surface rather than printed on
+ * top of it.
  */
 export function MonoLabel({
   children,
@@ -35,7 +34,7 @@ export function MonoLabel({
   className = "",
 }: MonoLabelProps) {
   return (
-    <Tag id={id} className={`pw-mono ${TONE[tone]} ${className}`}>
+    <Tag id={id} className={`${TONE[tone]} ${className}`}>
       {children}
     </Tag>
   );

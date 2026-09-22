@@ -8,52 +8,29 @@ type DrawChartProps = {
   className?: string;
 };
 
-/* Chart geometry, in viewBox units. VIEW_H equals the rendered pixel height
-   (h-40 = 160px) and preserveAspectRatio is "none", so the y axis maps 1:1
-   and the HTML tick labels can be positioned on the same coordinates. Every
-   stroke is non-scaling, so the horizontal stretch never thickens a line. */
-const VIEW_W = 520;
-const VIEW_H = 160;
-const PLOT_LEFT = 8;
-const PLOT_RIGHT = 512;
-const PLOT_TOP = 14;
-const PLOT_BOTTOM = 146;
-const AXIS_X = 1;
-const AXIS_Y = 159;
-
-/** Marker edge, in device pixels. Square caps on a zero-length path give an
-    undistorted square even though the viewBox is stretched horizontally. */
-const MARKER_PX = 7;
-/** How many trailing draws carry an accent marker. */
-const MARKED = 3;
+/* Plot geometry, in viewBox units. */
+const VIEW_W = 560;
+const VIEW_H = 220;
+const PAD_L = 44;
+const PAD_R = 14;
+const PAD_T = 16;
+const PAD_B = 30;
 
 const MONTHS = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
 ];
 
-/** "2025-10-08" → "Oct 2025". Parsed as text: no Date, no timezone drift. */
+/** "2025-10-08" to "Oct 2025". Parsed as text: no Date, no timezone drift. */
 function monthYear(iso: string): string {
   const [year, month] = iso.split("-");
   return `${MONTHS[Number(month) - 1]} ${year}`;
 }
 
 /**
- * CRS cutoff across recent general rounds.
- *
- * Hand-rolled SVG: one 2px INK polyline for the cutoff, hairline axes, accent
- * SQUARE markers on the last three draws, mono tick labels. No fill, no grid,
- * no dots, no tooltip, no rounded caps, no animation.
+ * CRS cutoff across recent general rounds, plotted on an instrument screen:
+ * a dark well, etched gridlines, a lit trace with a glow, a soft wash beneath
+ * it, and glass beads marking the last three rounds.
  */
 export function DrawChart({
   series = DRAW_SERIES,
@@ -65,92 +42,143 @@ export function DrawChart({
   const span = max - min || 1;
   const steps = Math.max(1, series.length - 1);
 
-  const coords = series.map((point, index) => {
-    const x = PLOT_LEFT + (index * (PLOT_RIGHT - PLOT_LEFT)) / steps;
-    const y =
-      PLOT_BOTTOM - ((point.cutoff - min) / span) * (PLOT_BOTTOM - PLOT_TOP);
-    return { x, y };
-  });
+  const coords = series.map((point, index) => ({
+    x: PAD_L + (index * (VIEW_W - PAD_L - PAD_R)) / steps,
+    y:
+      VIEW_H - PAD_B -
+      ((point.cutoff - min) / span) * (VIEW_H - PAD_T - PAD_B),
+  }));
 
-  const path = coords
+  const line = coords
     .map(({ x, y }, index) => `${index === 0 ? "M" : "L"} ${x} ${y}`)
     .join(" ");
 
-  const markers = coords.slice(-MARKED);
+  const area =
+    `${line} L ${coords[coords.length - 1].x} ${VIEW_H - PAD_B}` +
+    ` L ${coords[0].x} ${VIEW_H - PAD_B} Z`;
+
   const first = series[0];
   const latest = series[series.length - 1];
+  const markers = coords.slice(-3);
 
-  const label = `Line chart: CRS cutoff across ${series.length} general draws, from ${first.cutoff} in ${monthYear(first.date)} to ${latest.cutoff} in ${monthYear(latest.date)}. The last ${MARKED} rounds are marked.`;
+  const gridValues = [max, Math.round((max + min) / 2), min];
+
+  const label = `Line chart: CRS cutoff across ${series.length} general draws, from ${first.cutoff} in ${monthYear(first.date)} to ${latest.cutoff} in ${monthYear(latest.date)}.`;
 
   return (
     <Frame
-      label="CRS cutoff — general draws"
+      variant="device"
+      label="CRS cutoff, general draws"
       note={EXAMPLE_PROFILE}
       className={className}
     >
-      <figure>
-        <div className="flex items-start gap-2">
-          <div className="relative h-40 w-10 shrink-0">
-            <span
-              className="pw-num absolute right-0 -translate-y-1/2 text-[11px] text-pw-ink-dim"
-              style={{ top: PLOT_TOP }}
-            >
-              {max}
-            </span>
-            <span
-              className="pw-num absolute right-0 -translate-y-1/2 text-[11px] text-pw-ink-dim"
-              style={{ top: PLOT_BOTTOM }}
-            >
-              {min}
-            </span>
-          </div>
+      <div className="sk-well-dark p-3">
+        <svg
+          role="img"
+          aria-label={label}
+          viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
+          className="h-auto w-full"
+        >
+          <defs>
+            <linearGradient id="draw-wash" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#5C93EE" stopOpacity="0.38" />
+              <stop offset="100%" stopColor="#5C93EE" stopOpacity="0" />
+            </linearGradient>
+            <linearGradient id="draw-trace" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#7FB0F5" />
+              <stop offset="100%" stopColor="#4C86E8" />
+            </linearGradient>
+          </defs>
 
-          <svg
-            role="img"
-            aria-label={label}
-            viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
-            preserveAspectRatio="none"
-            className="h-40 w-full"
-          >
-            {/* Hairline axes. */}
-            <path
-              d={`M ${AXIS_X} ${PLOT_TOP - 8} L ${AXIS_X} ${AXIS_Y} L ${VIEW_W - AXIS_X} ${AXIS_Y}`}
-              fill="none"
-              stroke="var(--pw-hairline)"
-              strokeWidth={1}
-              vectorEffect="non-scaling-stroke"
-            />
+          {/* Etched gridlines and axis figures. */}
+          {gridValues.map((value) => {
+            const y =
+              VIEW_H - PAD_B - ((value - min) / span) * (VIEW_H - PAD_T - PAD_B);
+            return (
+              <g key={value}>
+                <line
+                  x1={PAD_L}
+                  y1={y}
+                  x2={VIEW_W - PAD_R}
+                  y2={y}
+                  stroke="rgba(255,255,255,0.09)"
+                  strokeWidth={1}
+                />
+                <text
+                  x={PAD_L - 10}
+                  y={y + 4}
+                  textAnchor="end"
+                  className="sk-readout"
+                  fontSize="11"
+                  fill="rgba(239,230,207,0.55)"
+                >
+                  {value}
+                </text>
+              </g>
+            );
+          })}
 
-            {/* The cutoff itself: 2px ink, mitred joins, butt caps. */}
-            <path
-              d={path}
-              fill="none"
-              stroke="var(--pw-ink)"
-              strokeWidth={2}
-              strokeLinecap="butt"
-              strokeLinejoin="miter"
-              vectorEffect="non-scaling-stroke"
-            />
+          <path d={area} fill="url(#draw-wash)" />
 
-            {/* Square accent markers on the three most recent rounds. */}
-            {markers.map(({ x, y }, index) => (
-              <path
-                key={index}
-                d={`M ${x} ${y} L ${x} ${y}`}
-                stroke="var(--pw-accent)"
-                strokeWidth={MARKER_PX}
-                strokeLinecap="square"
-                vectorEffect="non-scaling-stroke"
+          <path
+            d={line}
+            fill="none"
+            stroke="url(#draw-trace)"
+            strokeWidth={2.5}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{ filter: "drop-shadow(0 0 6px rgba(92,147,238,0.7))" }}
+          />
+
+          {/* Glass beads on the last three rounds. */}
+          {markers.map((point, index) => (
+            <g key={index}>
+              <circle
+                cx={point.x}
+                cy={point.y}
+                r={5}
+                fill="#2A5FBE"
+                stroke="rgba(255,255,255,0.85)"
+                strokeWidth={1.5}
+                style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.5))" }}
               />
-            ))}
-          </svg>
-        </div>
+              <circle
+                cx={point.x - 1.2}
+                cy={point.y - 1.6}
+                r={1.5}
+                fill="rgba(255,255,255,0.8)"
+              />
+            </g>
+          ))}
 
-        <figcaption className="mt-3 flex items-center justify-between gap-4 border-t border-pw-hairline pt-3 pl-12">
-          <MonoLabel tone="dim">{monthYear(first.date)}</MonoLabel>
-          <MonoLabel tone="dim">{monthYear(latest.date)}</MonoLabel>
-        </figcaption>
-      </figure>
+          <text
+            x={PAD_L}
+            y={VIEW_H - 8}
+            className="sk-readout"
+            fontSize="11"
+            fill="rgba(239,230,207,0.45)"
+          >
+            {monthYear(first.date)}
+          </text>
+          <text
+            x={VIEW_W - PAD_R}
+            y={VIEW_H - 8}
+            textAnchor="end"
+            className="sk-readout"
+            fontSize="11"
+            fill="rgba(239,230,207,0.45)"
+          >
+            {monthYear(latest.date)}
+          </text>
+        </svg>
+      </div>
+
+      <div className="mt-3 flex items-center justify-between">
+        <MonoLabel tone="dim">Last {series.length} general rounds</MonoLabel>
+        <span className="sk-readout text-[13px] text-pw-accent">
+          {latest.cutoff}
+        </span>
+      </div>
     </Frame>
   );
 }

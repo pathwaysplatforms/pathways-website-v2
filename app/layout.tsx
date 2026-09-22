@@ -1,15 +1,22 @@
 import type { Metadata, Viewport } from "next";
-import { JetBrains_Mono, Urbanist } from "next/font/google";
-import { GridOverlay } from "@/components/ui/GridOverlay";
+import { Inter, JetBrains_Mono, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
 
-const urbanist = Urbanist({
+/** Display. A transitional serif reads as engraved, which sans cannot do. */
+const sourceSerif = Source_Serif_4({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-urbanist",
+  variable: "--font-source-serif",
 });
 
-/** Labels, data, captions, footer. Exactly the two weights the contract allows. */
+/** Interface and body. */
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
+
+/** Instrument readouts: every figure on a dial, plate or panel. */
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
@@ -36,8 +43,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  // Matches --pw-bg. Kept as a keyword so no hex lives outside globals.css.
-  themeColor: "white",
+  themeColor: "#E9E5DD",
   width: "device-width",
   initialScale: 1,
 };
@@ -48,12 +54,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${urbanist.variable} ${jetbrainsMono.variable}`}
+      className={`${sourceSerif.variable} ${inter.variable} ${jetbrainsMono.variable}`}
     >
       <body>
-        {/* The grid is visible. It paints over section backgrounds and under
-            every piece of content — see the z-index pair below. */}
-        <GridOverlay />
+        {/* body::before lays the grain at z-1; content sits above it. */}
         <div className="relative z-[2]">{children}</div>
       </body>
     </html>

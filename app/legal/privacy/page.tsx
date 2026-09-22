@@ -23,10 +23,10 @@ export default function PrivacyPage() {
       <Section grid aria-labelledby="privacy-title">
         <div className="col-span-4 md:col-span-8">
           <header className="flex flex-col gap-8">
-            <h1 id="privacy-title" className="pw-display">
+            <h1 id="privacy-title" className="sk-display">
               Privacy
             </h1>
-            <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2 border-t border-pw-hairline pt-4">
+            <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2 border-t border-[rgba(45,38,28,0.12)] pt-4">
               <MonoLabel tone="dim">Last updated</MonoLabel>
               <MonoLabel>{LAST_UPDATED}</MonoLabel>
             </div>
@@ -35,9 +35,9 @@ export default function PrivacyPage() {
           {/* PLACEHOLDER — legal review required */}
           <div className="mt-12 flex flex-col md:mt-16">
             <section className="flex flex-col gap-4 pb-10 md:pb-12">
-              <h2 className="pw-heading">Our posture</h2>
-              <p className="pw-body">{PRIVACY_POSTURE}</p>
-              <p className="pw-body">
+              <h2 className="sk-heading">Our posture</h2>
+              <p className="sk-body">{PRIVACY_POSTURE}</p>
+              <p className="sk-body">
                 {SITE.name} asks for the details it needs to show you relevant
                 information, and nothing beyond that. You can see what we hold
                 about you, correct it, and have it removed.
@@ -47,8 +47,8 @@ export default function PrivacyPage() {
             <Rule />
 
             <section className="flex flex-col gap-4 py-10 md:py-12">
-              <h2 className="pw-heading">What we hold</h2>
-              <p className="pw-body">
+              <h2 className="sk-heading">What we hold</h2>
+              <p className="sk-body">
                 The profile you enter — education, work history, language
                 results, family situation — and any documents you choose to
                 upload. We also keep the account details needed to sign you in
@@ -59,8 +59,8 @@ export default function PrivacyPage() {
             <Rule />
 
             <section className="flex flex-col gap-4 py-10 md:py-12">
-              <h2 className="pw-heading">Documents</h2>
-              <p className="pw-body">
+              <h2 className="sk-heading">Documents</h2>
+              <p className="sk-body">
                 Documents are encrypted in storage and in transit. They are used
                 to populate and check your own profile, not for anything else.
                 You can ask us to delete them at any time, and we will.
@@ -70,8 +70,8 @@ export default function PrivacyPage() {
             <Rule />
 
             <section className="flex flex-col gap-4 py-10 md:py-12">
-              <h2 className="pw-heading">Deletion</h2>
-              <p className="pw-body">
+              <h2 className="sk-heading">Deletion</h2>
+              <p className="sk-body">
                 Ask us to delete your documents or your account, and we remove
                 them from our systems. Backups roll off on their own schedule,
                 which the reviewed version of this page will state precisely.
@@ -82,8 +82,8 @@ export default function PrivacyPage() {
 
             {/* PLACEHOLDER — legal review required */}
             <section className="flex flex-col gap-4 py-10 md:py-12">
-              <h2 className="pw-heading">Provisional terms</h2>
-              <p className="pw-body">
+              <h2 className="sk-heading">Provisional terms</h2>
+              <p className="sk-body">
                 This page is provisional and has not yet been reviewed by
                 counsel. The reviewed version will name our processors, the
                 retention periods that apply, the legal basis for each use, and
@@ -96,16 +96,16 @@ export default function PrivacyPage() {
             <Rule />
 
             <section className="flex flex-col gap-4 py-10 md:py-12">
-              <h2 className="pw-heading">Scope</h2>
-              <p className="pw-body">{DISCLAIMER}</p>
+              <h2 className="sk-heading">Scope</h2>
+              <p className="sk-body">{DISCLAIMER}</p>
             </section>
 
             <Rule />
 
             <section className="flex flex-col gap-4 pt-10 md:pt-12">
-              <h2 className="pw-heading">Contact</h2>
+              <h2 className="sk-heading">Contact</h2>
               {/* PLACEHOLDER — legal review required */}
-              <p className="pw-body">
+              <p className="sk-body">
                 A contact route for privacy questions and deletion requests will
                 be published here alongside the reviewed version.
               </p>

@@ -1,53 +1,51 @@
-import { Numeral } from "@/components/ui/Numeral";
-import { Rule } from "@/components/ui/Rule";
+import { Check } from "lucide-react";
+
+import { MonoLabel } from "@/components/ui/MonoLabel";
 import { Section } from "@/components/ui/Section";
 import { MANIFESTO } from "@/lib/fixtures";
 
 /**
- * 04 — Manifesto.
- *
- * Three statements from lib/fixtures, one line each, set at Display size on
- * the paper band and separated by the 2px ink rule. There is deliberately no
- * body copy underneath any of them: the line is the whole argument.
- *
- * The badge numeral carries the count, which is why this block — like every
- * other — has no uppercase eyebrow above it.
+ * Three statements, engraved into a single brushed plate rather than set as
+ * three cards. The plate is one object; the grooves between the statements
+ * are milled into it, which is why they run edge to edge.
  */
 export function Manifesto() {
   return (
     <Section
       id="manifesto"
-      bg="paper"
+      bg="sunk"
       topRule
       aria-label="How Pathways handles information"
     >
-      <ol className="flex flex-col">
-        {MANIFESTO.map((statement, index) => {
-          const isFirst = index === 0;
-          const isLast = index === MANIFESTO.length - 1;
+      <div className="sk-panel-lg relative mx-auto max-w-[900px] overflow-hidden">
+        <div className="flex items-center gap-3 bg-[linear-gradient(180deg,#FFFDF9_0%,#F2EFE7_100%)] px-6 py-4">
+          <span aria-hidden="true" className="sk-screw shrink-0" />
+          <MonoLabel>How this works</MonoLabel>
+          <span aria-hidden="true" className="sk-screw ml-auto shrink-0" />
+        </div>
+        <div aria-hidden="true" className="sk-groove" />
 
-          return (
+        <ol>
+          {MANIFESTO.map((statement, index) => (
             <li key={statement}>
-              {/* The 2px rule is what separates one statement from the next. */}
-              {isFirst ? null : <Rule />}
-              <div
-                className={[
-                  "pw-grid items-start gap-y-6",
-                  isFirst ? "" : "pt-10 md:pt-16",
-                  isLast ? "" : "pb-10 md:pb-16",
-                ].join(" ")}
-              >
-                <div className="col-span-4 md:col-span-2">
-                  <Numeral value={`0${index + 1}`} variant="badge" />
-                </div>
-                <p className="col-span-4 md:col-span-10 pw-display">
+              {index > 0 ? (
+                <div aria-hidden="true" className="sk-groove" />
+              ) : null}
+              <div className="flex items-center gap-5 px-6 py-7 md:gap-7 md:px-10 md:py-9">
+                <span
+                  aria-hidden="true"
+                  className="sk-well flex h-11 w-11 shrink-0 items-center justify-center text-pw-accent"
+                >
+                  <Check size={20} strokeWidth={2.75} />
+                </span>
+                <p className="font-display text-[clamp(21px,2.4vw,32px)] leading-[1.15] font-semibold tracking-[-0.015em] text-pw-ink [text-shadow:0_1px_0_rgba(255,255,255,0.85)]">
                   {statement}
                 </p>
               </div>
             </li>
-          );
-        })}
-      </ol>
+          ))}
+        </ol>
+      </div>
     </Section>
   );
 }
