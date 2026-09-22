@@ -1,6 +1,12 @@
 import { PathwayChip } from "@/components/product/PathwayChip";
+import { Frame } from "@/components/ui/Frame";
+import { MonoLabel } from "@/components/ui/MonoLabel";
 import type { Pathway } from "@/lib/fixtures";
-import { DRAW_SUMMARY_FALLBACK, PATHWAYS } from "@/lib/fixtures";
+import {
+  DRAW_SUMMARY_FALLBACK,
+  EXAMPLE_PROFILE,
+  PATHWAYS,
+} from "@/lib/fixtures";
 
 type PathwayFunnelProps = {
   pathways?: readonly Pathway[];
@@ -12,6 +18,10 @@ type PathwayFunnelProps = {
 /**
  * The matching screen, frozen: every mapped pathway checked at once, three
  * still open. Static — the funnel does not animate, it is already resolved.
+ *
+ * Inside the Frame every divider is a 1px hairline. The one accent value is
+ * the count of open pathways; matched chips are ink, eliminated chips are
+ * hairline.
  */
 export function PathwayFunnel({
   pathways = PATHWAYS,
@@ -23,25 +33,35 @@ export function PathwayFunnel({
   ).length;
 
   return (
-    <div className={`w-full ${className}`}>
-      <div className="flex items-baseline justify-between gap-4">
-        <p className="pw-mono">Pathways checked</p>
-        <p className="text-[12px] leading-none text-pw-ink-dim">
-          <span className="pw-num">{totalMapped}</span> mapped{" "}
-          <span aria-hidden="true">·</span>{" "}
-          <span className="pw-num">{matchedCount}</span> open
-        </p>
-      </div>
+    <Frame
+      label="Pathways checked"
+      note={EXAMPLE_PROFILE}
+      className={className}
+    >
+      <dl className="flex items-end justify-between gap-6 border-b border-pw-hairline pb-4">
+        <div>
+          <MonoLabel as="dt" tone="dim">
+            Mapped
+          </MonoLabel>
+          <dd className="pw-num mt-2 text-[32px] text-pw-ink">{totalMapped}</dd>
+        </div>
+        <div className="text-right">
+          <MonoLabel as="dt" tone="dim">
+            Open on this profile
+          </MonoLabel>
+          <dd className="pw-num mt-2 text-[32px] text-pw-accent">
+            {matchedCount}
+          </dd>
+        </div>
+      </dl>
 
-      <div className="mt-4 flex flex-wrap gap-1.5">
+      <ul className="mt-4 flex flex-wrap gap-1.5">
         {pathways.map((pathway) => (
-          <PathwayChip
-            key={pathway.id}
-            name={pathway.name}
-            status={pathway.status}
-          />
+          <li key={pathway.id}>
+            <PathwayChip name={pathway.name} status={pathway.status} />
+          </li>
         ))}
-      </div>
-    </div>
+      </ul>
+    </Frame>
   );
 }

@@ -2,15 +2,19 @@ import type { Pathway } from "@/lib/fixtures";
 
 type PathwayChipProps = {
   name: string;
-  /** "eliminated" (default) dims and strikes the label. */
+  /** "eliminated" (default) drops the chip to a hairline box and dim text. */
   status?: Pathway["status"];
   className?: string;
 };
 
 /**
- * One pathway in the funnel: a small hairline-bordered pill.
- * Matched chips carry a single accent dot — the only accent in the funnel.
- * Accent is scarce; do not add a second accent treatment here.
+ * One pathway in the funnel. A SQUARE box — no pill, no radius, no dot.
+ *
+ * matched    — 1px ink border, ink label.
+ * eliminated — 1px hairline border, dim label.
+ *
+ * Accent never appears here. The funnel spends its single accent on the count
+ * of open pathways in the header, and one accent per mock is the budget.
  */
 export function PathwayChip({
   name,
@@ -22,18 +26,13 @@ export function PathwayChip({
   return (
     <span
       className={[
-        "inline-flex items-center gap-1.5 rounded-full border border-pw-hairline",
-        "px-2.5 py-1 text-[12px] leading-none whitespace-nowrap",
-        isMatched ? "text-pw-ink" : "text-pw-ink-dim line-through",
+        "pw-mono inline-flex items-center border px-2 py-1.5 whitespace-nowrap",
+        isMatched
+          ? "border-pw-ink text-pw-ink"
+          : "border-pw-hairline text-pw-ink-dim",
         className,
       ].join(" ")}
     >
-      {isMatched ? (
-        <span
-          aria-hidden="true"
-          className="size-1.5 shrink-0 rounded-full bg-pw-accent"
-        />
-      ) : null}
       {name}
     </span>
   );

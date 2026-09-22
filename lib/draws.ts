@@ -131,3 +131,34 @@ export function formatRelativeTime(iso: string, now: Date = new Date()): string 
   if (elapsed < YEAR) return plural(Math.floor(elapsed / MONTH), "month");
   return plural(Math.floor(elapsed / YEAR), "year");
 }
+
+export type RelativeTimeParts = {
+  /** The figure set at Display size. "6", or the whole string when there is none. */
+  value: string;
+  /** The mono qualifier that sits beside it: "hours ago". Empty when unused. */
+  unit: string;
+};
+
+/**
+ * Splits a formatRelativeTime() string into the part that is a figure and the
+ * part that is words: "6 hours ago" -> { value: "6", unit: "hours ago" }.
+ *
+ * DataBand needs this because its fourth cell must read as a huge numeral
+ * beside a mono label like the other three, and because "18 minutes ago" set
+ * whole at Display size overflows a quarter-width cell on a phone. Display
+ * type is allowed to crop; a figure is not.
+ *
+ * Pure and total: anything without a leading integer — "just now" — comes back
+ * unchanged with an empty unit, so this cannot throw and cannot lose text.
+ */
+export function splitRelativeTime(label: string): RelativeTimeParts {
+  const match = /^(\d+)\s+(\S.*)$/.exec(label);
+  const value = match?.[1];
+  const unit = match?.[2];
+
+  if (value === undefined || unit === undefined) {
+    return { value: label, unit: "" };
+  }
+
+  return { value, unit };
+}

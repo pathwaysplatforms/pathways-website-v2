@@ -7,7 +7,7 @@ type SectionProps = {
   as?: ElementType;
   /**
    * Background band. "accent" also sets the text colour to white, because
-   * ink on #1A56DB fails contrast — never override that.
+   * ink on the accent blue fails contrast — never override that.
    */
   bg?: "bg" | "paper" | "accent";
   /** "default" is 128px desktop / 64px mobile. "flush" removes it. */
@@ -25,7 +25,11 @@ type SectionProps = {
 };
 
 const BG: Record<NonNullable<SectionProps["bg"]>, string> = {
-  bg: "bg-pw-bg",
+  // Transparent, NOT bg-pw-bg. <body> already paints --pw-bg, and an opaque
+  // white here would sit inside the z-2 content wrapper and hide the fixed
+  // GridOverlay underneath it. The paper and accent bands are opaque on
+  // purpose: a coloured block is meant to interrupt the grid.
+  bg: "",
   paper: "bg-pw-paper",
   accent: "bg-pw-accent text-pw-bg",
 };

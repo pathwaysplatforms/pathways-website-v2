@@ -1,6 +1,8 @@
 import { LeverRow } from "@/components/product/LeverRow";
+import { Frame } from "@/components/ui/Frame";
+import { MonoLabel } from "@/components/ui/MonoLabel";
 import type { Lever } from "@/lib/fixtures";
-import { MISSION_CONTROL } from "@/lib/fixtures";
+import { EXAMPLE_PROFILE, MISSION_CONTROL } from "@/lib/fixtures";
 
 export type MissionControlData = {
   scoreLabel: string;
@@ -16,34 +18,57 @@ type MissionControlCardProps = {
 };
 
 /**
- * The Mission Control panel, as it appears in the app: the score, the number
- * it is measured against, and the three actions that would move it.
- * A single 1px hairline border. No shadow — this sits inside StickyFrame.
+ * The Mission Control panel: the score, the published figure it is measured
+ * against, the distance between them, and the actions that would move it.
+ *
+ * The score is the one accent value in this mock, so the lever deltas stay
+ * ink — one accent per mock is the budget. Every divider inside the Frame is
+ * a 1px hairline.
  */
 export function MissionControlCard({
   data = MISSION_CONTROL,
   className = "",
 }: MissionControlCardProps) {
+  const gap = data.reference - data.score;
+
   return (
-    <div
-      className={`w-full rounded-lg border border-pw-hairline bg-pw-bg ${className}`}
-    >
-      <div className="px-5 pb-4 pt-5">
-        <p className="pw-eyebrow">{data.scoreLabel}</p>
-        <p className="pw-num mt-2 text-[44px] leading-none">{data.score}</p>
-        <p className="mt-3 text-[13px] leading-none text-pw-ink-dim">
-          {data.referenceLabel}{" "}
-          <span className="pw-num text-pw-ink-dim">{data.reference}</span>
-        </p>
-      </div>
+    <Frame label="Mission control" note={EXAMPLE_PROFILE} className={className}>
+      <dl className="grid grid-cols-3 gap-4 border-b border-pw-hairline pb-5">
+        <div>
+          <MonoLabel as="dt" tone="dim">
+            {data.scoreLabel}
+          </MonoLabel>
+          <dd className="pw-num mt-3 text-[30px] md:text-[44px] text-pw-accent">
+            {data.score}
+          </dd>
+        </div>
+        <div className="border-l border-pw-hairline pl-4">
+          <MonoLabel as="dt" tone="dim">
+            {data.referenceLabel}
+          </MonoLabel>
+          <dd className="pw-num mt-3 text-[30px] md:text-[44px] text-pw-ink">
+            {data.reference}
+          </dd>
+        </div>
+        <div className="border-l border-pw-hairline pl-4">
+          <MonoLabel as="dt" tone="dim">
+            Gap
+          </MonoLabel>
+          <dd className="pw-num mt-3 text-[30px] md:text-[44px] text-pw-ink">{gap}</dd>
+        </div>
+      </dl>
 
-      <div role="presentation" className="border-t border-pw-hairline" />
-
-      <div className="px-5 [&>*:last-child]:border-b-0">
-        {data.levers.map((lever) => (
-          <LeverRow key={lever.id} lever={lever} />
+      <ul className="mt-1">
+        {data.levers.map((lever, position) => (
+          <li key={lever.id}>
+            <LeverRow
+              lever={lever}
+              index={position + 1}
+              divider={position < data.levers.length - 1}
+            />
+          </li>
         ))}
-      </div>
-    </div>
+      </ul>
+    </Frame>
   );
 }

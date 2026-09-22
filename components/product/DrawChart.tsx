@@ -1,22 +1,31 @@
+import { Frame } from "@/components/ui/Frame";
+import { MonoLabel } from "@/components/ui/MonoLabel";
 import type { DrawPoint } from "@/lib/fixtures";
-import { DRAW_SERIES } from "@/lib/fixtures";
+import { DRAW_SERIES, EXAMPLE_PROFILE } from "@/lib/fixtures";
 
 type DrawChartProps = {
   series?: readonly DrawPoint[];
   className?: string;
 };
 
-/* Chart geometry, in viewBox units. The viewBox height equals the rendered
-   pixel height, so the y axis maps 1:1 and the tick labels can sit on the
-   same coordinates. */
+/* Chart geometry, in viewBox units. VIEW_H equals the rendered pixel height
+   (h-40 = 160px) and preserveAspectRatio is "none", so the y axis maps 1:1
+   and the HTML tick labels can be positioned on the same coordinates. Every
+   stroke is non-scaling, so the horizontal stretch never thickens a line. */
 const VIEW_W = 520;
 const VIEW_H = 160;
 const PLOT_LEFT = 8;
 const PLOT_RIGHT = 512;
-const PLOT_TOP = 12;
-const PLOT_BOTTOM = 148;
+const PLOT_TOP = 14;
+const PLOT_BOTTOM = 146;
 const AXIS_X = 1;
 const AXIS_Y = 159;
+
+/** Marker edge, in device pixels. Square caps on a zero-length path give an
+    undistorted square even though the viewBox is stretched horizontally. */
+const MARKER_PX = 7;
+/** How many trailing draws carry an accent marker. */
+const MARKED = 3;
 
 const MONTHS = [
   "Jan",
@@ -40,9 +49,11 @@ function monthYear(iso: string): string {
 }
 
 /**
- * CRS cutoff across recent general rounds. Hand-rolled SVG: one accent
- * polyline, hairline axes, no fill, no grid, no dots, no tooltip, no
- * animation. The only marker is the accent point on the latest draw.
+ * CRS cutoff across recent general rounds.
+ *
+ * Hand-rolled SVG: one 2px INK polyline for the cutoff, hairline axes, accent
+ * SQUARE markers on the last three draws, mono tick labels. No fill, no grid,
+ * no dots, no tooltip, no rounded caps, no animation.
  */
 export function DrawChart({
   series = DRAW_SERIES,
@@ -65,69 +76,81 @@ export function DrawChart({
     .map(({ x, y }, index) => `${index === 0 ? "M" : "L"} ${x} ${y}`)
     .join(" ");
 
-  const last = coords[coords.length - 1];
+  const markers = coords.slice(-MARKED);
   const first = series[0];
   const latest = series[series.length - 1];
 
-  const label = `Line chart: CRS cutoff across ${series.length} general draws, from ${first.cutoff} in ${monthYear(first.date)} to ${latest.cutoff} in ${monthYear(latest.date)}.`;
+  const label = `Line chart: CRS cutoff across ${series.length} general draws, from ${first.cutoff} in ${monthYear(first.date)} to ${latest.cutoff} in ${monthYear(latest.date)}. The last ${MARKED} rounds are marked.`;
 
   return (
-    <figure className={`w-full ${className}`}>
-      <figcaption className="pw-mono">CRS cutoff — general draws</figcaption>
+    <Frame
+      label="CRS cutoff — general draws"
+      note={EXAMPLE_PROFILE}
+      className={className}
+    >
+      <figure>
+        <div className="flex items-start gap-2">
+          <div className="relative h-40 w-10 shrink-0">
+            <span
+              className="pw-num absolute right-0 -translate-y-1/2 text-[11px] text-pw-ink-dim"
+              style={{ top: PLOT_TOP }}
+            >
+              {max}
+            </span>
+            <span
+              className="pw-num absolute right-0 -translate-y-1/2 text-[11px] text-pw-ink-dim"
+              style={{ top: PLOT_BOTTOM }}
+            >
+              {min}
+            </span>
+          </div>
 
-      <div className="mt-4 flex items-start gap-2">
-        <div className="relative h-40 w-9 shrink-0">
-          <span
-            className="pw-num absolute right-0 -translate-y-1/2 text-[11px] leading-none text-pw-ink-dim"
-            style={{ top: PLOT_TOP }}
+          <svg
+            role="img"
+            aria-label={label}
+            viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
+            preserveAspectRatio="none"
+            className="h-40 w-full"
           >
-            {max}
-          </span>
-          <span
-            className="pw-num absolute right-0 -translate-y-1/2 text-[11px] leading-none text-pw-ink-dim"
-            style={{ top: PLOT_BOTTOM }}
-          >
-            {min}
-          </span>
+            {/* Hairline axes. */}
+            <path
+              d={`M ${AXIS_X} ${PLOT_TOP - 8} L ${AXIS_X} ${AXIS_Y} L ${VIEW_W - AXIS_X} ${AXIS_Y}`}
+              fill="none"
+              stroke="var(--pw-hairline)"
+              strokeWidth={1}
+              vectorEffect="non-scaling-stroke"
+            />
+
+            {/* The cutoff itself: 2px ink, mitred joins, butt caps. */}
+            <path
+              d={path}
+              fill="none"
+              stroke="var(--pw-ink)"
+              strokeWidth={2}
+              strokeLinecap="butt"
+              strokeLinejoin="miter"
+              vectorEffect="non-scaling-stroke"
+            />
+
+            {/* Square accent markers on the three most recent rounds. */}
+            {markers.map(({ x, y }, index) => (
+              <path
+                key={index}
+                d={`M ${x} ${y} L ${x} ${y}`}
+                stroke="var(--pw-accent)"
+                strokeWidth={MARKER_PX}
+                strokeLinecap="square"
+                vectorEffect="non-scaling-stroke"
+              />
+            ))}
+          </svg>
         </div>
 
-        <svg
-          role="img"
-          aria-label={label}
-          viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
-          preserveAspectRatio="none"
-          className="h-40 w-full"
-        >
-          <path
-            d={`M ${AXIS_X} ${PLOT_TOP - 6} L ${AXIS_X} ${AXIS_Y} L ${VIEW_W - AXIS_X} ${AXIS_Y}`}
-            fill="none"
-            stroke="var(--pw-hairline)"
-            strokeWidth={1}
-            vectorEffect="non-scaling-stroke"
-          />
-          <path
-            d={path}
-            fill="none"
-            stroke="var(--pw-accent)"
-            strokeWidth={1}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            vectorEffect="non-scaling-stroke"
-          />
-          <path
-            d={`M ${last.x} ${last.y} L ${last.x} ${last.y}`}
-            stroke="var(--pw-accent)"
-            strokeWidth={4}
-            strokeLinecap="round"
-            vectorEffect="non-scaling-stroke"
-          />
-        </svg>
-      </div>
-
-      <div className="pw-num mt-2 flex justify-between pl-11 text-[11px] leading-none text-pw-ink-dim">
-        <span>{monthYear(first.date)}</span>
-        <span>{monthYear(latest.date)}</span>
-      </div>
-    </figure>
+        <figcaption className="mt-3 flex items-center justify-between gap-4 border-t border-pw-hairline pt-3 pl-12">
+          <MonoLabel tone="dim">{monthYear(first.date)}</MonoLabel>
+          <MonoLabel tone="dim">{monthYear(latest.date)}</MonoLabel>
+        </figcaption>
+      </figure>
+    </Frame>
   );
 }
