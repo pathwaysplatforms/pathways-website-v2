@@ -1,67 +1,72 @@
-import { ArrowRight, Sparkles } from "lucide-react";
-
 import { MissionControlCard } from "@/components/product/MissionControlCard";
 import { Button } from "@/components/ui/Button";
 import { MonoLabel } from "@/components/ui/MonoLabel";
+import { Rule } from "@/components/ui/Rule";
+import { formatRelativeTime } from "@/lib/draws";
+import type { DrawSummary } from "@/lib/fixtures";
 import { HERO, SITE } from "@/lib/fixtures";
 
 /**
- * A static hero — nothing here appears on scroll and nothing pins.
+ * The opening spread.
  *
- * The depth comes from one lifted pane of glass carrying the product, sitting
- * in the page's ambient light with a coloured shadow under it. Server
- * Component; the whole site ships no client JavaScript.
+ * Headline and standfirst are ranged left across eight columns; a narrow
+ * metadata column carries the live figures as a dateline would. The product
+ * runs full width underneath as a plate, rather than floating beside the
+ * copy — which is the arrangement that makes a page read as a product ad.
+ *
+ * Server Component. The site ships no client JavaScript.
  */
-export function Hero() {
+export function Hero({ summary }: { summary: DrawSummary }) {
+  const facts: readonly { value: string; label: string }[] = [
+    { value: String(summary.totalDraws), label: "draws recorded" },
+    { value: String(summary.pathwaysMapped), label: "pathways mapped" },
+    { value: formatRelativeTime(summary.lastUpdatedIso), label: "last updated" },
+  ];
+
   return (
-    <header
-      aria-labelledby="hero-heading"
-      className="relative overflow-x-clip pt-16 pb-24 md:pt-24 md:pb-32"
-    >
-      <div className="nx-shell relative grid grid-cols-4 items-center gap-x-6 gap-y-16 md:grid-cols-12">
-        <div className="col-span-4 md:col-span-6">
-          <span className="nx-card-flat inline-flex items-center gap-2 rounded-full px-3.5 py-2">
-            <Sparkles
-              size={13}
-              strokeWidth={2.25}
-              aria-hidden="true"
-              className="text-nx-accent"
-            />
-            <MonoLabel>{HERO.kicker}</MonoLabel>
-          </span>
+    <header aria-labelledby="hero-heading" className="relative overflow-x-clip">
+      <div className="ed-shell">
+        <div className="ed-grid pt-14 pb-12 md:pt-20 md:pb-16">
+          <div className="col-span-4 md:col-span-8">
+            <MonoLabel className="block">01 &mdash; {HERO.kicker}</MonoLabel>
 
-          <h1 id="hero-heading" className="nx-display mt-7 max-w-[15ch]">
-            {HERO.headline}
-          </h1>
+            <h1 id="hero-heading" className="ed-display mt-7">
+              {HERO.headline}
+            </h1>
 
-          <p className="nx-body mt-7 max-w-[52ch]">{HERO.body}</p>
+            <p className="ed-lede mt-8">{HERO.body}</p>
 
-          <div className="mt-10 flex flex-wrap items-center gap-3">
-            <Button
-              href={SITE.appUrl}
-              variant="primary"
-              size="lg"
-              trailing={<ArrowRight size={17} strokeWidth={2.25} />}
-            >
-              Try it out
-            </Button>
-            <Button href="#specimen-voice" variant="secondary" size="lg">
-              See how it works
-            </Button>
+            <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
+              <Button href={SITE.appUrl} variant="primary" size="lg">
+                Try it out
+              </Button>
+              <Button href="#specimen-voice" variant="link">
+                How it works
+              </Button>
+            </div>
           </div>
-        </div>
 
-        <div className="col-span-4 md:col-span-6">
-          <div className="relative mx-auto w-full max-w-[540px]">
-            {/* A coloured pool of light under the pane, separate from its own
-                ambient shadow. One shadow alone reads as a flat sticker. */}
-            <div
-              aria-hidden="true"
-              className="absolute inset-x-6 -bottom-8 h-16 rounded-[999px] bg-[radial-gradient(ellipse_at_center,rgba(59,91,219,0.28)_0%,rgba(59,91,219,0)_72%)]"
-            />
-            <MissionControlCard floating />
-          </div>
+          {/* Dateline: the live figures, set small and ranged right. */}
+          <aside className="col-span-4 mt-14 md:col-span-3 md:col-start-10 md:mt-2">
+            <Rule tone="ink" />
+            <dl className="mt-4 flex flex-col gap-4">
+              {facts.map((fact) => (
+                <div key={fact.label} className="flex items-baseline gap-3">
+                  <dt className="sr-only">{fact.label}</dt>
+                  <dd className="ed-num text-[17px] text-ed-ink">
+                    {fact.value}
+                  </dd>
+                  <MonoLabel>{fact.label}</MonoLabel>
+                </div>
+              ))}
+            </dl>
+          </aside>
         </div>
+      </div>
+
+      {/* The plate, full width under the spread. */}
+      <div className="ed-shell pb-16 md:pb-24">
+        <MissionControlCard />
       </div>
     </header>
   );

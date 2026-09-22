@@ -1,9 +1,12 @@
 import { PathwayChip } from "@/components/product/PathwayChip";
 import { Frame } from "@/components/ui/Frame";
 import { MonoLabel } from "@/components/ui/MonoLabel";
-import { Rule } from "@/components/ui/Rule";
 import type { Pathway } from "@/lib/fixtures";
-import { DRAW_SUMMARY_FALLBACK, EXAMPLE_PROFILE, PATHWAYS } from "@/lib/fixtures";
+import {
+  DRAW_SUMMARY_FALLBACK,
+  EXAMPLE_PROFILE,
+  PATHWAYS,
+} from "@/lib/fixtures";
 
 type PathwayFunnelProps = {
   pathways?: readonly Pathway[];
@@ -12,8 +15,8 @@ type PathwayFunnelProps = {
 };
 
 /**
- * The matching screen, resolved: every mapped pathway checked at once, three
- * still open. The two counts sit above the result; the pills below carry it.
+ * The matching plate: every mapped pathway checked at once, three still open.
+ * The two counts head the plate; the catalogue of tags carries the result.
  */
 export function PathwayFunnel({
   pathways = PATHWAYS,
@@ -23,28 +26,28 @@ export function PathwayFunnel({
   const matchedCount = pathways.filter((p) => p.status === "matched").length;
 
   return (
-    <Frame label="Pathways checked" note={EXAMPLE_PROFILE} className={className}>
-      <div className="flex items-stretch gap-6">
-        <div className="flex-1">
-          <MonoLabel>Mapped</MonoLabel>
-          <p className="nx-readout mt-2 text-[34px] leading-none text-nx-ink">
+    <Frame
+      label="Pathways checked"
+      note={EXAMPLE_PROFILE}
+      className={className}
+      bodyClassName="!p-0"
+    >
+      <div className="grid grid-cols-2 border-b border-ed-rule">
+        <div className="border-r border-ed-rule p-5 md:p-6">
+          <MonoLabel className="block">Mapped</MonoLabel>
+          <p className="ed-figure-num mt-3 !text-[clamp(32px,3vw,44px)]">
             {totalMapped}
           </p>
         </div>
-        <Rule orientation="vertical" />
-        <div className="flex-1">
-          <MonoLabel>Open on this profile</MonoLabel>
-          <p className="nx-readout mt-2 text-[34px] leading-none text-nx-accent">
+        <div className="p-5 md:p-6">
+          <MonoLabel className="block">Open on this profile</MonoLabel>
+          <p className="ed-figure-num mt-3 !text-[clamp(32px,3vw,44px)] !text-ed-signal">
             {matchedCount}
           </p>
         </div>
       </div>
 
-      <div className="mt-6">
-        <Rule />
-      </div>
-
-      <ul className="mt-6 flex flex-wrap gap-2">
+      <ul className="flex flex-wrap gap-1.5 p-5 md:p-6">
         {pathways.map((pathway) => (
           <li key={pathway.id}>
             <PathwayChip name={pathway.name} status={pathway.status} />

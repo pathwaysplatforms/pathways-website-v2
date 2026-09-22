@@ -1,34 +1,16 @@
 type NumeralProps = {
+  /** "01".."05". An index, set as a dateline rather than as a badge. */
   value: string;
-  /** "glass" is a pale pane; "accent" is the lit one. */
-  variant?: "glass" | "accent";
   className?: string;
 };
 
 /**
- * The specimen number, on its own small pane. Set in mono so it reads as an
- * index rather than a heading.
+ * The specimen index. Mono, small, wide-tracked — it sits beside the label
+ * like a plate number, and is deliberately not a circle, badge or chip.
  */
-export function Numeral({
-  value,
-  variant = "glass",
-  className = "",
-}: NumeralProps) {
-  const surface =
-    variant === "accent"
-      ? "nx-chip-on"
-      : "nx-card-flat text-nx-ink-faint";
-
+export function Numeral({ value, className = "" }: NumeralProps) {
   return (
-    <span
-      aria-hidden="true"
-      className={[
-        surface,
-        "nx-readout inline-flex h-10 items-center justify-center px-3.5",
-        "text-[14px] !rounded-full",
-        className,
-      ].join(" ")}
-    >
+    <span aria-hidden="true" className={`ed-label !text-ed-ink ${className}`}>
       {value}
     </span>
   );

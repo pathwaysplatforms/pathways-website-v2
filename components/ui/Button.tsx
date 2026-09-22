@@ -4,48 +4,52 @@ import type { ReactNode } from "react";
 type ButtonProps = {
   children: ReactNode;
   href: string;
-  variant?: "primary" | "secondary";
+  /**
+   * "primary" is the solid ink block; "secondary" is the hairline outline;
+   * "link" is a text link with an arrow and an underline on hover.
+   */
+  variant?: "primary" | "secondary" | "link";
   size?: "md" | "lg";
-  trailing?: ReactNode;
   className?: string;
 };
 
-const VARIANT: Record<NonNullable<ButtonProps["variant"]>, string> = {
-  primary: "nx-btn-primary",
-  secondary: "nx-btn-secondary",
-};
-
 const SIZE: Record<NonNullable<ButtonProps["size"]>, string> = {
-  md: "h-11 px-5 text-[14.5px]",
-  lg: "h-[54px] px-8 text-[16px]",
+  md: "h-10 px-4",
+  lg: "h-12 px-6",
 };
 
 /**
- * A pill with a coloured shadow. The lift on hover and the coloured glow
- * beneath are what carry the depth — not a bevel. Pressing it sinks the face
- * into its own inner shadow.
+ * Solid ink, square to 2px, turning vermilion on hover. No gradient, no
+ * shadow, no lift — the colour change is the whole interaction.
  */
 export function Button({
   children,
   href,
   variant = "primary",
   size = "md",
-  trailing,
   className = "",
 }: ButtonProps) {
   const isExternal = href.startsWith("http");
-  const classes = ["nx-btn", VARIANT[variant], SIZE[size], className].join(" ");
 
-  const content = (
-    <>
-      {children}
-      {trailing ? (
-        <span aria-hidden="true" className="-mr-1 flex items-center">
-          {trailing}
-        </span>
-      ) : null}
-    </>
-  );
+  const classes =
+    variant === "link"
+      ? `ed-link ${className}`
+      : [
+          "ed-btn",
+          variant === "primary" ? "ed-btn-primary" : "ed-btn-secondary",
+          SIZE[size],
+          className,
+        ].join(" ");
+
+  const content =
+    variant === "link" ? (
+      <>
+        {children}
+        <span aria-hidden="true">&#8594;</span>
+      </>
+    ) : (
+      children
+    );
 
   if (isExternal) {
     return (

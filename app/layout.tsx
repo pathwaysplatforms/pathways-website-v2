@@ -1,16 +1,30 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import {
+  Instrument_Sans,
+  Instrument_Serif,
+  JetBrains_Mono,
+} from "next/font/google";
 import "./globals.css";
 
-/** Everything. Tight neo-grotesque at display sizes is the modern voice; a
- *  serif would pull the whole page back toward the engraved, retro look. */
-const inter = Inter({
+/**
+ * Display. One weight, high contrast — the reason it reads as a publication
+ * rather than as an interface.
+ */
+const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
+  weight: "400",
   display: "swap",
-  variable: "--font-inter",
+  variable: "--font-instrument-serif",
 });
 
-/** Instrument readouts: every figure on a dial, plate or panel. */
+/** Interface and body. */
+const instrumentSans = Instrument_Sans({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-instrument-sans",
+});
+
+/** Labels, captions, datelines and every figure in a plate. */
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
@@ -37,7 +51,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#EDF0F7",
+  themeColor: "#FBFAF7",
   width: "device-width",
   initialScale: 1,
 };
@@ -48,12 +62,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${jetbrainsMono.variable}`}
+      className={`${instrumentSerif.variable} ${instrumentSans.variable} ${jetbrainsMono.variable}`}
     >
-      <body>
-        {/* body::before lays the ambient light at z-0; content sits above it. */}
-        <div className="relative z-[1]">{children}</div>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

@@ -18,7 +18,7 @@ export default async function Home() {
     <>
       <Nav />
       <main>
-        <Hero />
+        <Hero summary={summary} />
         <DataBand summary={summary} />
         <Specimens />
         <Manifesto />

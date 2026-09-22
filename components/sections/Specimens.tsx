@@ -33,12 +33,11 @@ const MOCKS: Record<SpecimenId, ReactNode> = {
 export function Specimens() {
   return (
     <>
-      {SPECIMENS.map((specimen, index) => (
+      {SPECIMENS.map((specimen) => (
         <Specimen
           key={specimen.id}
           specimen={specimen}
           mock={MOCKS[specimen.id]}
-          lit={index === 0}
         />
       ))}
     </>

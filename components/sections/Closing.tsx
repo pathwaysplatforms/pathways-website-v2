@@ -1,41 +1,38 @@
-import { ArrowRight } from "lucide-react";
-
 import { Section } from "@/components/ui/Section";
 import { SITE } from "@/lib/fixtures";
 
 /**
- * The closing band. The whole block is the link: the anchor paints an
- * ::after over the positioned Section, so the entire field is the hit target.
+ * The one dark block on the site, and the last thing on the page. Entirely
+ * typographic: the whole band is the link, and the arrow travels on hover.
  */
 export function Closing() {
   return (
-    <Section id="closing" bg="accent" aria-labelledby="closing-heading">
+    <Section id="closing" bg="ink" aria-labelledby="closing-heading">
       <a
         href={SITE.appUrl}
         rel="noreferrer"
-        className="group flex flex-col items-start gap-10 after:absolute after:inset-0 md:flex-row md:items-center md:justify-between"
+        className="group flex flex-col items-start gap-10 after:absolute after:inset-0 md:flex-row md:items-end md:justify-between"
       >
         <div>
           <h2
             id="closing-heading"
-            className="text-[clamp(34px,4.6vw,62px)] leading-[1.03] font-semibold tracking-[-0.038em] text-white"
+            className="ed-display !text-ed-paper max-w-[16ch]"
           >
             Try it out.
           </h2>
-          <p className="mt-4 max-w-[44ch] text-[17.5px] leading-relaxed tracking-[-0.012em] text-white/72">
+          <p className="ed-lede mt-6 !text-ed-paper/65">
             Build your profile once and see where it stands against every
             pathway and every recorded draw.
           </p>
         </div>
 
-        {/* A glass pill on the blue, lifting on hover with the block. */}
-        <span className="nx-btn nx-btn-secondary h-[56px] shrink-0 px-8 text-[16px] transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-0.5">
+        <span className="ed-label !text-ed-paper flex shrink-0 items-baseline gap-3 border-b border-ed-paper/35 pb-2">
           Open Pathways
           <span
             aria-hidden="true"
-            className="transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-1"
+            className="transition-transform duration-150 ease-out group-hover:translate-x-1.5"
           >
-            <ArrowRight size={18} strokeWidth={2.25} />
+            &#8594;
           </span>
         </span>
       </a>

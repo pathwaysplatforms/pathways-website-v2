@@ -1,5 +1,3 @@
-import { Check } from "lucide-react";
-
 import type { Pathway } from "@/lib/fixtures";
 
 type PathwayChipProps = {
@@ -9,12 +7,9 @@ type PathwayChipProps = {
 };
 
 /**
- * One pathway as a pill.
- *
- * A matched pathway is lit — accent fill with a coloured glow under it. An
- * eliminated one is quiet glass with a hairline rim. The state is carried by
- * light rather than by depth, which is the whole difference between this and
- * the extruded version.
+ * One pathway, set as a squared tag in mono — a catalogue entry, not a pill.
+ * An open pathway takes the ink border and a signal mark; a closed one stays
+ * hairline and faint.
  */
 export function PathwayChip({
   name,
@@ -25,15 +20,9 @@ export function PathwayChip({
 
   return (
     <span
-      className={[
-        "nx-chip",
-        isMatched ? "nx-chip-on" : "nx-chip-off",
-        className,
-      ].join(" ")}
+      className={["ed-tag", isMatched ? "ed-tag-on" : "", className].join(" ")}
     >
-      {isMatched ? (
-        <Check size={13} strokeWidth={2.75} aria-hidden="true" />
-      ) : null}
+      {isMatched ? <span aria-hidden="true" className="ed-mark" /> : null}
       {name}
     </span>
   );

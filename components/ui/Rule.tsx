@@ -1,32 +1,32 @@
 type RuleProps = {
   orientation?: "horizontal" | "vertical";
-  tone?: "light" | "dark";
+  tone?: "hair" | "strong" | "ink" | "invert";
   className?: string;
 };
 
-const BASE: Record<string, string> = {
-  "horizontal-light": "nx-line w-full",
-  "horizontal-dark": "nx-line-dark w-full",
-  "vertical-light": "nx-line-v",
-  "vertical-dark": "nx-line-v-dark",
+const TONE: Record<NonNullable<RuleProps["tone"]>, string> = {
+  hair: "border-ed-rule",
+  strong: "border-ed-rule-strong",
+  ink: "border-ed-ink",
+  invert: "border-ed-paper/25",
 };
 
-/**
- * A hairline that fades out at both ends, so a divider inside a rounded
- * surface never collides with the corner radius. The fade has to run along
- * the divider's own axis, which is why vertical is a separate rule rather
- * than the horizontal one rotated.
- */
+/** A single hairline. The only divider in the system. */
 export function Rule({
   orientation = "horizontal",
-  tone = "light",
+  tone = "hair",
   className = "",
 }: RuleProps) {
+  const axis =
+    orientation === "horizontal"
+      ? "w-full border-t"
+      : "self-stretch border-l";
+
   return (
     <div
       role="presentation"
       aria-hidden="true"
-      className={`${BASE[`${orientation}-${tone}`]} ${className}`}
+      className={`${axis} ${TONE[tone]} ${className}`}
     />
   );
 }

@@ -1,50 +1,40 @@
-import { FileText, RefreshCw, HelpCircle } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
-
 import { MonoLabel } from "@/components/ui/MonoLabel";
 import { Section } from "@/components/ui/Section";
 import { MANIFESTO } from "@/lib/fixtures";
 
-/** One glyph per statement, in fixture order. */
-const ICONS: readonly LucideIcon[] = [FileText, RefreshCw, HelpCircle];
-
 /**
- * Three statements, each on its own pane. Laid out as three columns rather
- * than one tall panel: the previous version left a lot of dead space around a
- * single block, and three panes give the ambient light something to fall on.
+ * Three statements as a numbered list, separated by rules. No cards and no
+ * icons: the statements are short enough that anything placed around them is
+ * decoration, and decoration is what makes a page look generated.
  */
 export function Manifesto() {
   return (
     <Section
       id="manifesto"
       grid
-      innerClassName="gap-y-10"
+      rule="ink"
+      innerClassName="gap-y-8"
       aria-label="How Pathways handles information"
     >
-      <div className="col-span-4 md:col-span-12">
-        <MonoLabel>How this works</MonoLabel>
+      <div className="col-span-4 md:col-span-3">
+        <MonoLabel className="block">How this works</MonoLabel>
       </div>
 
-      {MANIFESTO.map((statement, index) => {
-        const Icon = ICONS[index] ?? FileText;
-
-        return (
-          <div
+      <ol className="col-span-4 md:col-span-8 md:col-start-5">
+        {MANIFESTO.map((statement, index) => (
+          <li
             key={statement}
-            className="nx-card col-span-4 flex flex-col gap-5 p-7 md:p-8"
+            className="flex items-baseline gap-6 border-b border-ed-rule py-7 first:pt-0 last:border-b-0 last:pb-0 md:gap-10"
           >
-            <span
-              aria-hidden="true"
-              className="nx-well flex h-12 w-12 items-center justify-center !rounded-2xl text-nx-accent"
-            >
-              <Icon size={21} strokeWidth={2} />
-            </span>
-            <p className="text-[21px] leading-[1.25] font-semibold tracking-[-0.028em] text-nx-ink md:text-[23px]">
+            <MonoLabel className="shrink-0">
+              {String(index + 1).padStart(2, "0")}
+            </MonoLabel>
+            <p className="ed-heading !text-[clamp(23px,2.6vw,34px)]">
               {statement}
             </p>
-          </div>
-        );
-      })}
+          </li>
+        ))}
+      </ol>
     </Section>
   );
 }

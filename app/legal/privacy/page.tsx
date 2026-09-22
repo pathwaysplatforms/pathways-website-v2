@@ -23,11 +23,11 @@ export default function PrivacyPage() {
       <Section grid aria-labelledby="privacy-title">
         <div className="col-span-4 md:col-span-8">
           <header className="flex flex-col gap-8">
-            <h1 id="privacy-title" className="nx-display">
+            <h1 id="privacy-title" className="ed-display">
               Privacy
             </h1>
-            <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2 border-t border-[rgba(18,26,56,0.1)] pt-4">
-              <MonoLabel tone="dim">Last updated</MonoLabel>
+            <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2 border-t border-ed-rule pt-4">
+              <MonoLabel tone="faint">Last updated</MonoLabel>
               <MonoLabel>{LAST_UPDATED}</MonoLabel>
             </div>
           </header>
@@ -35,9 +35,9 @@ export default function PrivacyPage() {
           {/* PLACEHOLDER — legal review required */}
           <div className="mt-12 flex flex-col md:mt-16">
             <section className="flex flex-col gap-4 pb-10 md:pb-12">
-              <h2 className="nx-heading">Our posture</h2>
-              <p className="nx-body">{PRIVACY_POSTURE}</p>
-              <p className="nx-body">
+              <h2 className="ed-heading">Our posture</h2>
+              <p className="ed-body">{PRIVACY_POSTURE}</p>
+              <p className="ed-body">
                 {SITE.name} asks for the details it needs to show you relevant
                 information, and nothing beyond that. You can see what we hold
                 about you, correct it, and have it removed.
@@ -47,8 +47,8 @@ export default function PrivacyPage() {
             <Rule />
 
             <section className="flex flex-col gap-4 py-10 md:py-12">
-              <h2 className="nx-heading">What we hold</h2>
-              <p className="nx-body">
+              <h2 className="ed-heading">What we hold</h2>
+              <p className="ed-body">
                 The profile you enter — education, work history, language
                 results, family situation — and any documents you choose to
                 upload. We also keep the account details needed to sign you in
@@ -59,8 +59,8 @@ export default function PrivacyPage() {
             <Rule />
 
             <section className="flex flex-col gap-4 py-10 md:py-12">
-              <h2 className="nx-heading">Documents</h2>
-              <p className="nx-body">
+              <h2 className="ed-heading">Documents</h2>
+              <p className="ed-body">
                 Documents are encrypted in storage and in transit. They are used
                 to populate and check your own profile, not for anything else.
                 You can ask us to delete them at any time, and we will.
@@ -70,8 +70,8 @@ export default function PrivacyPage() {
             <Rule />
 
             <section className="flex flex-col gap-4 py-10 md:py-12">
-              <h2 className="nx-heading">Deletion</h2>
-              <p className="nx-body">
+              <h2 className="ed-heading">Deletion</h2>
+              <p className="ed-body">
                 Ask us to delete your documents or your account, and we remove
                 them from our systems. Backups roll off on their own schedule,
                 which the reviewed version of this page will state precisely.
@@ -82,8 +82,8 @@ export default function PrivacyPage() {
 
             {/* PLACEHOLDER — legal review required */}
             <section className="flex flex-col gap-4 py-10 md:py-12">
-              <h2 className="nx-heading">Provisional terms</h2>
-              <p className="nx-body">
+              <h2 className="ed-heading">Provisional terms</h2>
+              <p className="ed-body">
                 This page is provisional and has not yet been reviewed by
                 counsel. The reviewed version will name our processors, the
                 retention periods that apply, the legal basis for each use, and
@@ -96,16 +96,16 @@ export default function PrivacyPage() {
             <Rule />
 
             <section className="flex flex-col gap-4 py-10 md:py-12">
-              <h2 className="nx-heading">Scope</h2>
-              <p className="nx-body">{DISCLAIMER}</p>
+              <h2 className="ed-heading">Scope</h2>
+              <p className="ed-body">{DISCLAIMER}</p>
             </section>
 
             <Rule />
 
             <section className="flex flex-col gap-4 pt-10 md:pt-12">
-              <h2 className="nx-heading">Contact</h2>
+              <h2 className="ed-heading">Contact</h2>
               {/* PLACEHOLDER — legal review required */}
-              <p className="nx-body">
+              <p className="ed-body">
                 A contact route for privacy questions and deletion requests will
                 be published here alongside the reviewed version.
               </p>

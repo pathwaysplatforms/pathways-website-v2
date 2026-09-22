@@ -1,508 +1,322 @@
 @import "tailwindcss";
 
 /* ===========================================================================
-   PATHWAYS — neo-skeuomorphic material system.
+   PATHWAYS — editorial system.
 
-   Not retro skeuomorphism. There is no paper, no brass, no brushed metal and
-   no engraved serif here: those imitate real objects. This system imitates
-   LIGHT instead, on materials that only exist on a screen — frosted glass,
-   tinted acrylic, soft extrusion.
+   The register is a considered publication, not a product page. What that
+   means in practice, and what every rule below exists to protect:
 
-   Four rules hold the whole thing together:
+     · STRUCTURE IS TYPE AND RULE. Hierarchy comes from size, weight and
+       1px rules. Not from cards, shadows, gradients or glass — none of
+       which appear anywhere in this file.
+     · FIGURES, NOT CARDS. Product screens are set like plates in an
+       article: a hairline border, a mono caption, flat on the page.
+     · ONE SIGNAL COLOUR. Vermilion, and only on live data and the primary
+       action. Everything else is paper and ink.
+     · RANGED, ASYMMETRIC LAYOUT. Content sits on the 12-column grid at
+       uneven spans with a narrow metadata column — never 6/6 halves.
 
-     1. SPECULAR EDGE. Every raised surface carries a bright 1px top lip and a
-        fainter 1px rim all the way round. That highlight, not a border, is
-        what makes an edge read as a physical edge.
-     2. TINTED SHADOW. Shadows are never black. They take the hue of the
-        ambient light in the page (a cool indigo), which is what separates
-        this from 2020 neumorphism's dead grey.
-     3. STACKED ELEVATION. Three shadows per surface — a 1px contact, a mid
-        spread, and a wide ambient — each softer and fainter than the last.
-     4. AMBIENT BLOOM. Colour comes from large, very soft light sources behind
-        the content, not from filled blocks.
-
-   Recessed surfaces invert 1 and 3: the shadow goes inside, the highlight
-   goes underneath.
+   Deliberately absent: border-radius above 2px, box-shadow, gradient,
+   backdrop-filter, icon chips, pill badges.
    =========================================================================== */
 
 @theme {
-  --color-nx-ink: #101528;
-  --color-nx-ink-soft: #5A6486;
-  --color-nx-ink-faint: #8B93AE;
-  --color-nx-line: rgba(18, 26, 56, 0.08);
-  --color-nx-canvas: #EDF0F7;
-  --color-nx-surface: #FFFFFF;
-  --color-nx-deep: #141A2E;
-  --color-nx-deeper: #0C1020;
-  --color-nx-accent: #4F7DF3;
-  --color-nx-accent-deep: #3B5BDB;
-  --color-nx-accent-lit: #7AA2FF;
-  --color-nx-violet: #8B5CF6;
-  --color-nx-cyan: #38BDF8;
+  --color-ed-paper: #FBFAF7;
+  --color-ed-paper-alt: #F4F2EC;
+  --color-ed-ink: #14130F;
+  --color-ed-ink-2: #3A3830;
+  --color-ed-muted: #6E6B62;
+  --color-ed-faint: #9A968C;
+  --color-ed-rule: #E2DFD6;
+  --color-ed-rule-strong: #CBC7BA;
+  --color-ed-signal: #C0442B;
+  --color-ed-white: #FFFFFF;
 
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
 
-  --container-nx-shell: 1280px;
-}
-
-:root {
-  /* The ambient hue every shadow is tinted with. */
-  --nx-shade: 23, 34, 78;
-
-  /* --- elevation: contact, spread, ambient -------------------------------- */
-  --nx-e1:
-    0 1px 2px rgba(var(--nx-shade), 0.06),
-    0 3px 8px -2px rgba(var(--nx-shade), 0.08);
-  --nx-e2:
-    0 1px 2px rgba(var(--nx-shade), 0.07),
-    0 8px 20px -6px rgba(var(--nx-shade), 0.12),
-    0 20px 40px -16px rgba(var(--nx-shade), 0.14);
-  --nx-e3:
-    0 1px 2px rgba(var(--nx-shade), 0.08),
-    0 14px 32px -10px rgba(var(--nx-shade), 0.16),
-    0 40px 80px -24px rgba(var(--nx-shade), 0.22);
-
-  /* --- specular: the bright lip and the rim ------------------------------- */
-  --nx-spec:
-    inset 0 1px 0 rgba(255, 255, 255, 0.92),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
-  --nx-spec-dark:
-    inset 0 1px 0 rgba(255, 255, 255, 0.16),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.07);
-
-  /* --- recess ------------------------------------------------------------- */
-  --nx-in:
-    inset 0 2px 6px rgba(var(--nx-shade), 0.13),
-    inset 0 1px 1px rgba(var(--nx-shade), 0.1),
-    0 1px 0 rgba(255, 255, 255, 0.85);
-  --nx-in-dark:
-    inset 0 2px 8px rgba(0, 0, 0, 0.5),
-    inset 0 1px 2px rgba(0, 0, 0, 0.6),
-    0 1px 0 rgba(255, 255, 255, 0.07);
-
-  /* --- materials ---------------------------------------------------------- */
-  --nx-glass: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.88) 0%,
-    rgba(255, 255, 255, 0.7) 60%,
-    rgba(255, 255, 255, 0.62) 100%
-  );
-  --nx-glass-solid: linear-gradient(180deg, #FFFFFF 0%, #F7F9FD 100%);
-  --nx-acrylic: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.72) 0%,
-    rgba(246, 248, 253, 0.56) 100%
-  );
-  --nx-deep: linear-gradient(180deg, #1B2238 0%, #141A2E 55%, #0F1424 100%);
-  --nx-accent: linear-gradient(180deg, #7AA2FF 0%, #4F7DF3 42%, #3B5BDB 100%);
-  --nx-accent-press: linear-gradient(180deg, #3B5BDB 0%, #4F7DF3 65%, #6B95FF 100%);
-
-  --nx-r-sm: 12px;
-  --nx-r: 18px;
-  --nx-r-lg: 26px;
-  --nx-r-xl: 34px;
-
-  --nx-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --nx-ease-press: cubic-bezier(0.4, 0, 0.2, 1);
+  --container-ed-shell: 1220px;
 }
 
 /* --- base ----------------------------------------------------------------- */
 @layer base {
   *, *::before, *::after { box-sizing: border-box; }
 
-  html { -webkit-text-size-adjust: 100%; }
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
 
   body {
     margin: 0;
-    color: var(--color-nx-ink);
+    background-color: var(--color-ed-paper);
+    color: var(--color-ed-ink);
     font-family: var(--font-sans);
     font-size: 17px;
-    line-height: 1.6;
-    letter-spacing: -0.011em;
-    background-color: var(--color-nx-canvas);
+    line-height: 1.62;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: clip;
   }
 
-  /* Ambient light. Three very soft sources behind everything, as plain
-     radial gradients — a blurred element would cost a filter pass, and at
-     this softness the gradient is indistinguishable. Fixed, but painted
-     once: no blend mode and no background-attachment, both of which forced a
-     full-viewport composite on every scroll frame in an earlier pass. */
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background-image:
-      radial-gradient(58% 46% at 12% -4%, rgba(99, 102, 241, 0.2) 0%, rgba(99, 102, 241, 0) 72%),
-      radial-gradient(48% 42% at 88% 6%, rgba(56, 189, 248, 0.18) 0%, rgba(56, 189, 248, 0) 72%),
-      radial-gradient(62% 48% at 68% 96%, rgba(139, 92, 246, 0.14) 0%, rgba(139, 92, 246, 0) 74%),
-      linear-gradient(180deg, #F3F6FC 0%, #E8ECF5 100%);
+  h1, h2, h3, h4, h5, h6, p, figure, figcaption, blockquote, dl, dd {
+    margin: 0;
   }
 
-  h1, h2, h3, h4, h5, h6, p, figure, blockquote, dl, dd { margin: 0; }
   ul, ol { margin: 0; padding: 0; list-style: none; }
   a { color: inherit; text-decoration: none; }
   img, svg, video { display: block; max-width: 100%; }
   button { font: inherit; color: inherit; background: none; border: none; padding: 0; cursor: pointer; }
 
   :focus-visible {
-    outline: 2px solid var(--color-nx-accent);
+    outline: 2px solid var(--color-ed-signal);
     outline-offset: 3px;
-    border-radius: var(--nx-r-sm);
+    border-radius: 2px;
   }
 
-  ::selection { background-color: rgba(79, 125, 243, 0.22); }
+  ::selection {
+    background-color: var(--color-ed-ink);
+    color: var(--color-ed-paper);
+  }
 }
 
 @layer components {
   /* ======================= type ========================================== */
 
-  /* Modern display type is tight, not engraved. The only "depth" allowed on
-     text is a half-pixel light edge — anything more is the retro look. */
-  .nx-display {
-    font-size: clamp(42px, 5.6vw, 82px);
-    font-weight: 620;
-    line-height: 1.02;
-    letter-spacing: -0.038em;
-    color: var(--color-nx-ink);
+  /* Instrument Serif ships one weight. At display size that is a feature:
+     the contrast does the work that a heavier cut would otherwise do. */
+  .ed-display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(44px, 6.2vw, 92px);
+    line-height: 0.98;
+    letter-spacing: -0.021em;
+    color: var(--color-ed-ink);
   }
 
-  .nx-heading {
-    font-size: clamp(27px, 3vw, 44px);
-    font-weight: 600;
-    line-height: 1.1;
-    letter-spacing: -0.03em;
-    color: var(--color-nx-ink);
+  .ed-heading {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(29px, 3.5vw, 48px);
+    line-height: 1.06;
+    letter-spacing: -0.016em;
+    color: var(--color-ed-ink);
   }
 
-  .nx-title {
+  .ed-subhead {
+    font-family: var(--font-sans);
     font-size: 18px;
-    font-weight: 590;
-    letter-spacing: -0.018em;
-    color: var(--color-nx-ink);
+    font-weight: 600;
+    letter-spacing: -0.011em;
+    color: var(--color-ed-ink);
   }
 
-  .nx-body {
-    font-size: 17.5px;
+  /* The standfirst under a display line: larger than body, still quiet. */
+  .ed-lede {
+    font-size: 19px;
+    line-height: 1.55;
+    letter-spacing: -0.008em;
+    color: var(--color-ed-ink-2);
+    max-width: 46ch;
+  }
+
+  .ed-body {
+    font-size: 17px;
     line-height: 1.62;
-    letter-spacing: -0.012em;
-    color: var(--color-nx-ink-soft);
-    max-width: 60ch;
+    color: var(--color-ed-muted);
+    max-width: 58ch;
   }
 
-  .nx-label {
-    font-size: 11.5px;
-    font-weight: 560;
+  /* Every label, caption, axis tick and dateline on the site. */
+  .ed-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.085em;
-    color: var(--color-nx-ink-faint);
+    letter-spacing: 0.12em;
+    color: var(--color-ed-faint);
   }
 
-  .nx-label-dark { color: rgba(255, 255, 255, 0.52); }
-
-  .nx-readout {
+  .ed-num {
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
     font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  /* A figure set as type rather than as a statistic in a box. */
+  .ed-figure-num {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(40px, 4.6vw, 68px);
+    line-height: 0.92;
     letter-spacing: -0.02em;
+    color: var(--color-ed-ink);
   }
 
-  /* A figure rendered in the accent, with its own bloom. */
-  .nx-lit {
-    color: #AEC6FF;
-    text-shadow: 0 0 20px rgba(122, 162, 255, 0.55);
-  }
+  /* ======================= layout ======================================== */
 
-  /* Gradient text, used once or twice and never on body copy. */
-  .nx-grad-text {
-    background-image: linear-gradient(135deg, #1B2238 0%, #3B5BDB 52%, #8B5CF6 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-
-  /* ======================= surfaces ====================================== */
-
-  .nx-shell {
+  .ed-shell {
     width: 100%;
-    max-width: var(--container-nx-shell);
+    max-width: var(--container-ed-shell);
     margin-inline: auto;
     padding-inline: 20px;
   }
 
   @media (min-width: 768px) {
-    .nx-shell { padding-inline: 36px; }
+    .ed-shell { padding-inline: 40px; }
   }
 
-  /* The workhorse: a pane of near-solid glass. No backdrop-filter — it is
-     opaque enough not to need one, and a page full of blur layers is what
-     makes this style stutter. Blur is reserved for the nav. */
-  .nx-card {
-    position: relative;
-    background-image: var(--nx-glass);
-    border-radius: var(--nx-r-lg);
-    box-shadow: var(--nx-spec), var(--nx-e2);
+  .ed-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 20px;
   }
 
-  .nx-card-flat {
-    position: relative;
-    background-image: var(--nx-acrylic);
-    border-radius: var(--nx-r);
-    box-shadow: var(--nx-spec), var(--nx-e1);
+  @media (min-width: 768px) {
+    .ed-grid {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: 24px;
+    }
   }
 
-  /* Lifted clear of the page — the hero's product shot. */
-  .nx-float {
-    position: relative;
-    background-image: var(--nx-glass-solid);
-    border-radius: var(--nx-r-xl);
-    box-shadow: var(--nx-spec), var(--nx-e3);
+  /* ======================= rules ========================================= */
+
+  .ed-rule { border-top: 1px solid var(--color-ed-rule); }
+  .ed-rule-strong { border-top: 1px solid var(--color-ed-rule-strong); }
+  .ed-rule-ink { border-top: 1px solid var(--color-ed-ink); }
+
+  /* ======================= figures ======================================= */
+
+  /* A plate. Flat on the page, hairline border, white stock so product
+     screens read as reproductions rather than as live interface. */
+  .ed-plate {
+    background-color: var(--color-ed-white);
+    border: 1px solid var(--color-ed-rule);
+    border-radius: 2px;
   }
 
-  /* Frosted: the one place a backdrop-filter earns its cost. */
-  .nx-frost {
-    position: relative;
-    background-image: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.72) 0%,
-      rgba(255, 255, 255, 0.55) 100%
-    );
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border-radius: var(--nx-r-lg);
-    box-shadow: var(--nx-spec), var(--nx-e2);
+  .ed-plate-caption {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--color-ed-rule);
   }
 
-  .nx-dark {
-    position: relative;
-    background-image: var(--nx-deep);
-    border-radius: var(--nx-r-lg);
-    box-shadow: var(--nx-spec-dark), var(--nx-e3);
+  /* A recessed field inside a plate, for data that is being READ OUT rather
+     than laid out — the waveform, the chart. Flat fill, no inner shadow. */
+  .ed-field {
+    background-color: var(--color-ed-paper-alt);
+    border-radius: 2px;
   }
 
-  /* Recessed well, light and dark. */
-  .nx-well {
-    background-image: linear-gradient(180deg, rgba(219, 225, 240, 0.85) 0%, rgba(235, 239, 248, 0.7) 100%);
-    border-radius: var(--nx-r-sm);
-    box-shadow: var(--nx-in);
-  }
-
-  .nx-well-dark {
-    background-image: linear-gradient(180deg, #0A0E1B 0%, #121829 100%);
-    border-radius: var(--nx-r-sm);
-    box-shadow: var(--nx-in-dark);
-  }
-
-  /* Hairline. One pixel, tinted, no groove — grooves are the retro idiom. */
-  .nx-line {
-    height: 1px;
-    background-image: linear-gradient(
-      90deg,
-      rgba(18, 26, 56, 0) 0%,
-      rgba(18, 26, 56, 0.1) 12%,
-      rgba(18, 26, 56, 0.1) 88%,
-      rgba(18, 26, 56, 0) 100%
-    );
-    border: 0;
-  }
-
-  /* Vertical variants: the fade has to run along the other axis. */
-  .nx-line-v {
-    width: 1px;
-    background-image: linear-gradient(
-      180deg,
-      rgba(18, 26, 56, 0) 0%,
-      rgba(18, 26, 56, 0.1) 14%,
-      rgba(18, 26, 56, 0.1) 86%,
-      rgba(18, 26, 56, 0) 100%
-    );
-    border: 0;
-  }
-
-  .nx-line-v-dark {
-    width: 1px;
-    background-image: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.12) 14%,
-      rgba(255, 255, 255, 0.12) 86%,
-      rgba(255, 255, 255, 0) 100%
-    );
-    border: 0;
-  }
-
-  .nx-line-dark {
-    height: 1px;
-    background-image: linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.1) 12%,
-      rgba(255, 255, 255, 0.1) 88%,
-      rgba(255, 255, 255, 0) 100%
-    );
-    border: 0;
-  }
-
-  /* ======================= bands ========================================= */
-
-  .nx-band-dark {
-    background-image:
-      radial-gradient(70% 120% at 20% 0%, rgba(79, 125, 243, 0.24) 0%, rgba(79, 125, 243, 0) 68%),
-      radial-gradient(60% 110% at 88% 100%, rgba(139, 92, 246, 0.2) 0%, rgba(139, 92, 246, 0) 70%),
-      var(--nx-deep);
-  }
-
-  .nx-band-accent {
-    background-image:
-      radial-gradient(60% 130% at 78% 8%, rgba(168, 196, 255, 0.34) 0%, rgba(168, 196, 255, 0) 66%),
-      linear-gradient(160deg, #5A86F5 0%, #3B5BDB 52%, #3247B8 100%);
+  .ed-field-ink {
+    background-color: var(--color-ed-ink);
+    border-radius: 2px;
   }
 
   /* ======================= controls ====================================== */
 
-  .nx-btn {
-    position: relative;
+  .ed-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    border-radius: 999px;
+    gap: 10px;
+    border-radius: 2px;
     font-family: var(--font-sans);
-    font-weight: 580;
-    letter-spacing: -0.014em;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.008em;
     white-space: nowrap;
-    transition:
-      transform 130ms var(--nx-ease),
-      box-shadow 130ms var(--nx-ease),
-      filter 160ms var(--nx-ease);
+    transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
   }
 
-  .nx-btn-primary {
-    background-image: var(--nx-accent);
-    color: #fff;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.55),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.18),
-      0 1px 2px rgba(35, 52, 130, 0.3),
-      0 10px 24px -8px rgba(59, 91, 219, 0.62),
-      0 2px 8px -2px rgba(59, 91, 219, 0.4);
+  .ed-btn-primary {
+    background-color: var(--color-ed-ink);
+    color: var(--color-ed-paper);
   }
 
-  .nx-btn-primary:hover {
-    transform: translateY(-1px);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.6),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.2),
-      0 1px 2px rgba(35, 52, 130, 0.28),
-      0 16px 34px -10px rgba(59, 91, 219, 0.7),
-      0 3px 10px -2px rgba(59, 91, 219, 0.45);
+  .ed-btn-primary:hover { background-color: var(--color-ed-signal); }
+
+  .ed-btn-secondary {
+    background-color: transparent;
+    color: var(--color-ed-ink);
+    border: 1px solid var(--color-ed-rule-strong);
   }
 
-  .nx-btn-primary:active {
-    background-image: var(--nx-accent-press);
-    transform: translateY(0.5px);
-    box-shadow:
-      inset 0 2px 6px rgba(20, 34, 96, 0.5),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.1),
-      0 1px 2px rgba(35, 52, 130, 0.2);
+  .ed-btn-secondary:hover { border-color: var(--color-ed-ink); }
+
+  /* A text link that behaves like one: an underline that arrives on hover,
+     offset far enough not to clip the descenders. */
+  .ed-link {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--color-ed-ink);
+    text-decoration-line: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 4px;
+    transition: text-decoration-color 120ms ease, color 120ms ease;
   }
 
-  .nx-btn-secondary {
-    background-image: var(--nx-glass);
-    color: var(--color-nx-ink);
-    box-shadow: var(--nx-spec), var(--nx-e1);
+  .ed-link:hover {
+    color: var(--color-ed-signal);
+    text-decoration-color: currentColor;
   }
 
-  .nx-btn-secondary:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--nx-spec), var(--nx-e2);
-  }
-
-  .nx-btn-secondary:active {
-    transform: translateY(0.5px);
-    box-shadow:
-      inset 0 2px 5px rgba(var(--nx-shade), 0.16),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.5);
-  }
-
-  /* Chips carry state in light, not in depth: an active chip glows. */
-  .nx-chip {
+  /* A pathway tag. Not a pill: a squared tag with a hairline. */
+  .ed-tag {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 7px 13px;
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: 520;
-    letter-spacing: -0.012em;
-    transition: transform 130ms var(--nx-ease), box-shadow 130ms var(--nx-ease);
+    gap: 7px;
+    padding: 5px 9px;
+    border: 1px solid var(--color-ed-rule);
+    border-radius: 2px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.01em;
+    color: var(--color-ed-faint);
   }
 
-  .nx-chip-on {
-    background-image: var(--nx-accent);
-    color: #fff;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.45),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.16),
-      0 1px 2px rgba(35, 52, 130, 0.22),
-      0 6px 16px -6px rgba(59, 91, 219, 0.6);
+  .ed-tag-on {
+    border-color: var(--color-ed-ink);
+    color: var(--color-ed-ink);
   }
 
-  .nx-chip-off {
-    background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(245, 247, 252, 0.4) 100%);
-    color: var(--color-nx-ink-faint);
-    box-shadow:
-      inset 0 0 0 1px rgba(18, 26, 56, 0.07),
-      0 1px 1px rgba(var(--nx-shade), 0.04);
-  }
-
-  /* Small status dot with a bloom. */
-  .nx-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 999px;
-    background-image: linear-gradient(180deg, #6EE7A8 0%, #22C07A 100%);
-    box-shadow:
-      0 0 10px rgba(34, 192, 122, 0.8),
-      inset 0 1px 0 rgba(255, 255, 255, 0.55);
-  }
-
-  .nx-dot-accent {
-    background-image: linear-gradient(180deg, #9CBCFF 0%, #4F7DF3 100%);
-    box-shadow:
-      0 0 10px rgba(79, 125, 243, 0.85),
-      inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  /* The one place a solid signal block appears at small size. */
+  .ed-mark {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background-color: var(--color-ed-signal);
   }
 }
 
 /* ======================= voice capture ================================== */
 
-.nx-wave-bar {
+.ed-wave-bar {
   transform-box: fill-box;
-  transform-origin: 50% 50%;
+  transform-origin: 50% 100%;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .nx-wave-bar {
-    animation: nx-wave 1400ms cubic-bezier(0.4, 0, 0.5, 1) infinite alternate;
+  .ed-wave-bar {
+    animation: ed-wave 1500ms cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
   }
 
-  .nx-caret {
-    animation: nx-caret 1100ms steps(1, end) infinite;
-  }
+  .ed-caret { animation: ed-caret 1100ms steps(1, end) infinite; }
 }
 
-@keyframes nx-wave {
-  from { transform: scaleY(0.26); }
+@keyframes ed-wave {
+  from { transform: scaleY(0.22); }
   to   { transform: scaleY(1); }
 }
 
-@keyframes nx-caret {
+@keyframes ed-caret {
   0%, 49%   { opacity: 1; }
   50%, 100% { opacity: 0; }
 }

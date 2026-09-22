@@ -4,69 +4,43 @@ import { MonoLabel } from "@/components/ui/MonoLabel";
 
 type FrameProps = {
   children: ReactNode;
+  /** Caption on the left of the plate's head rule. */
   label?: string;
   /**
-   * Right side of the header. Every mock showing a figure passes
+   * Caption on the right. Every plate showing a figure passes
    * "Example profile" here — illustrative numbers are never presented as
    * real thresholds.
    */
   note?: string;
-  /**
-   * "card"  — a pane of glass (default)
-   * "float" — lifted clear of the page, for the hero
-   */
-  variant?: "card" | "float";
-  /** A status dot in the header, for mocks depicting a live state. */
-  dot?: "none" | "green" | "accent";
   className?: string;
   bodyClassName?: string;
 };
 
 /**
- * The pane every product mock sits in.
- *
- * The header is divided from the body by a fading hairline rather than a
- * groove — grooves are the retro idiom. Padding is generous; tight padding is
- * what makes a soft-shadow surface look like a cheap widget.
+ * A plate: a product screen reproduced in the page the way a figure is
+ * reproduced in an article. Hairline border, captioned head, flat white
+ * stock. No shadow, no radius beyond 2px, nothing floating.
  */
 export function Frame({
   children,
   label,
   note,
-  variant = "card",
-  dot = "none",
   className = "",
   bodyClassName = "",
 }: FrameProps) {
-  const hasHeader = label !== undefined || note !== undefined || dot !== "none";
+  const hasCaption = label !== undefined || note !== undefined;
 
   return (
-    <div
-      className={[
-        variant === "float" ? "nx-float" : "nx-card",
-        "overflow-hidden",
-        className,
-      ].join(" ")}
-    >
-      {hasHeader ? (
-        <>
-          <div className="flex items-center gap-2.5 px-5 pt-4 pb-3.5 md:px-6">
-            {dot !== "none" ? (
-              <span
-                aria-hidden="true"
-                className={`nx-dot shrink-0 ${dot === "accent" ? "nx-dot-accent" : ""}`}
-              />
-            ) : null}
-            {label !== undefined ? <MonoLabel>{label}</MonoLabel> : null}
-            {note !== undefined ? (
-              <MonoLabel className="ml-auto opacity-70">{note}</MonoLabel>
-            ) : null}
-          </div>
-          <div aria-hidden="true" className="nx-line" />
-        </>
+    <figure className={`ed-plate ${className}`}>
+      {hasCaption ? (
+        <figcaption className="ed-plate-caption">
+          {label !== undefined ? <MonoLabel>{label}</MonoLabel> : <span />}
+          {note !== undefined ? (
+            <MonoLabel tone="signal">{note}</MonoLabel>
+          ) : null}
+        </figcaption>
       ) : null}
-
-      <div className={`relative p-5 md:p-6 ${bodyClassName}`}>{children}</div>
-    </div>
+      <div className={`p-5 md:p-7 ${bodyClassName}`}>{children}</div>
+    </figure>
   );
 }
