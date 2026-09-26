@@ -1,331 +1,244 @@
 @import "tailwindcss";
 
-/* ===========================================================================
-   PATHWAYS — editorial system.
-
-   The register is a considered publication, not a product page. What that
-   means in practice, and what every rule below exists to protect:
-
-     · STRUCTURE IS TYPE AND RULE. Hierarchy comes from size, weight and
-       1px rules. Not from cards, shadows, gradients or glass — none of
-       which appear anywhere in this file.
-     · FIGURES, NOT CARDS. Product screens are set like plates in an
-       article: a hairline border, a mono caption, flat on the page.
-     · ONE SIGNAL COLOUR. Vermilion, and only on live data and the primary
-       action. Everything else is paper and ink.
-     · RANGED, ASYMMETRIC LAYOUT. Content sits on the 12-column grid at
-       uneven spans with a narrow metadata column — never 6/6 halves.
-
-   Deliberately absent: border-radius above 2px, box-shadow, gradient,
-   backdrop-filter, icon chips, pill badges.
-   =========================================================================== */
+/* ============================================================
+   PATHWAYS — design tokens
+   Per .claude/skills/apple-design/SKILL.md.
+   Spacing and type in rem/em so the layout scales with the
+   user's text-size setting (§15, Dynamic Type).
+   ============================================================ */
 
 @theme {
-  --color-ed-paper: #FBFAF7;
-  --color-ed-paper-alt: #F4F2EC;
-  --color-ed-ink: #14130F;
-  --color-ed-ink-2: #3A3830;
-  --color-ed-muted: #6E6B62;
-  --color-ed-faint: #9A968C;
-  --color-ed-rule: #E2DFD6;
-  --color-ed-rule-strong: #CBC7BA;
-  --color-ed-signal: #C0442B;
-  --color-ed-white: #FFFFFF;
+  /* --- Surfaces & ink ---------------------------------------- */
+  --color-canvas: oklch(99% 0.004 250);
+  --color-surface: oklch(100% 0 0);
+  --color-surface-sunken: oklch(96.5% 0.005 250);
+  --color-hairline: oklch(89% 0.008 250);
 
-  --font-display: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
-  --font-sans: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+  --color-ink: oklch(21% 0.015 260);
+  --color-ink-muted: oklch(42% 0.012 260);
+  --color-ink-faint: oklch(54% 0.010 260);
 
-  --container-ed-shell: 1220px;
+  /* --- Accent ----------------------------------------------- */
+  --color-accent: oklch(54% 0.19 262);
+  --color-accent-press: oklch(47% 0.19 262);
+  --color-accent-tint: oklch(95% 0.03 262);
+  --color-on-accent: oklch(100% 0 0);
+
+  /* --- Translucent chrome (§12) ----------------------------- */
+  --color-chrome: oklch(100% 0 0 / 0.68);
+  --color-chrome-edge: oklch(100% 0 0 / 0.55);
+  --blur-chrome: 20px;
+
+  /* --- Elevation -------------------------------------------- */
+  --shadow-raised: 0 1px 2px oklch(21% 0.015 260 / 0.05),
+                   0 4px 12px oklch(21% 0.015 260 / 0.05);
+  --shadow-floating: 0 2px 4px oklch(21% 0.015 260 / 0.06),
+                     0 12px 32px oklch(21% 0.015 260 / 0.09);
+
+  /* --- Rhythm ----------------------------------------------- */
+  --spacing-gutter: 1.5rem;
+  --spacing-section: 7.5rem;
+  --container-measure: 46rem;   /* readable line length */
+  --container-page: 78rem;      /* max page width */
+
+  --radius-card: 1.25rem;
+  --radius-pill: 999rem;
 }
 
-/* --- base ----------------------------------------------------------------- */
-@layer base {
-  *, *::before, *::after { box-sizing: border-box; }
+/* ============================================================
+   Base
+   ============================================================ */
 
-  html {
-    -webkit-text-size-adjust: 100%;
-  }
+* { min-width: 0; }
 
-  body {
-    margin: 0;
-    background-color: var(--color-ed-paper);
-    color: var(--color-ed-ink);
-    font-family: var(--font-sans);
-    font-size: 17px;
-    line-height: 1.62;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    overflow-x: clip;
-  }
+html {
+  /* Light only. Without this, a visitor whose OS is in dark mode gets
+     dark-rendered form controls, scrollbars and autofill against a light
+     page — pin the whole UA surface to light instead. */
+  color-scheme: light;
 
-  h1, h2, h3, h4, h5, h6, p, figure, figcaption, blockquote, dl, dd {
-    margin: 0;
-  }
+  /* Nav is translucent and content scrolls under it (§12), so
+     anchor targets need to clear its height. */
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+  -webkit-text-size-adjust: 100%;
+}
 
-  ul, ol { margin: 0; padding: 0; list-style: none; }
-  a { color: inherit; text-decoration: none; }
-  img, svg, video { display: block; max-width: 100%; }
-  button { font: inherit; color: inherit; background: none; border: none; padding: 0; cursor: pointer; }
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  /* §15: platform system font ships optical sizing + tracking tables */
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 100%;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
 
-  :focus-visible {
-    outline: 2px solid var(--color-ed-signal);
-    outline-offset: 3px;
-    border-radius: 2px;
-  }
+::selection {
+  background: var(--color-accent-tint);
+  color: var(--color-ink);
+}
 
-  ::selection {
-    background-color: var(--color-ed-ink);
-    color: var(--color-ed-paper);
-  }
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 0.25rem;
 }
 
 @layer components {
-  /* ======================= type ========================================== */
+  /* ============================================================
+     Type scale (§15)
+     Tracking and leading are size-specific — never one value for
+     all sizes. Large display text tightens toward -0.02em; body
+     sits near 0; small labels get a positive bump for legibility.
+     ============================================================ */
 
-  /* Instrument Serif ships one weight. At display size that is a feature:
-     the contrast does the work that a heavier cut would otherwise do. */
-  .ed-display {
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: clamp(44px, 6.2vw, 92px);
-    line-height: 0.98;
-    letter-spacing: -0.021em;
-    color: var(--color-ed-ink);
+  .t-display {
+    font-size: clamp(2.5rem, 1.4rem + 4.6vw, 4.5rem);
+    line-height: 1.04;
+    letter-spacing: -0.022em;
+    font-weight: 640;
+    font-optical-sizing: auto;
   }
 
-  .ed-heading {
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: clamp(29px, 3.5vw, 48px);
-    line-height: 1.06;
-    letter-spacing: -0.016em;
-    color: var(--color-ed-ink);
+  .t-title {
+    font-size: clamp(1.9rem, 1.3rem + 2.4vw, 3rem);
+    line-height: 1.1;
+    letter-spacing: -0.018em;
+    font-weight: 620;
+    font-optical-sizing: auto;
   }
 
-  .ed-subhead {
-    font-family: var(--font-sans);
-    font-size: 18px;
-    font-weight: 600;
+  .t-heading {
+    font-size: clamp(1.25rem, 1.1rem + 0.7vw, 1.5rem);
+    line-height: 1.25;
     letter-spacing: -0.011em;
-    color: var(--color-ed-ink);
+    font-weight: 600;
   }
 
-  /* The standfirst under a display line: larger than body, still quiet. */
-  .ed-lede {
-    font-size: 19px;
+  .t-lead {
+    font-size: clamp(1.0625rem, 1rem + 0.4vw, 1.25rem);
     line-height: 1.55;
-    letter-spacing: -0.008em;
-    color: var(--color-ed-ink-2);
-    max-width: 46ch;
-  }
-
-  .ed-body {
-    font-size: 17px;
-    line-height: 1.62;
-    color: var(--color-ed-muted);
-    max-width: 58ch;
-  }
-
-  /* Every label, caption, axis tick and dateline on the site. */
-  .ed-label {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--color-ed-faint);
-  }
-
-  .ed-num {
-    font-family: var(--font-mono);
-    font-variant-numeric: tabular-nums;
-    font-weight: 500;
-    letter-spacing: -0.01em;
-  }
-
-  /* A figure set as type rather than as a statistic in a box. */
-  .ed-figure-num {
-    font-family: var(--font-display);
+    letter-spacing: -0.004em;
     font-weight: 400;
-    font-size: clamp(40px, 4.6vw, 68px);
-    line-height: 0.92;
-    letter-spacing: -0.02em;
-    color: var(--color-ed-ink);
   }
 
-  /* ======================= layout ======================================== */
-
-  .ed-shell {
-    width: 100%;
-    max-width: var(--container-ed-shell);
-    margin-inline: auto;
-    padding-inline: 20px;
+  .t-body {
+    font-size: 1rem;
+    line-height: 1.6;
+    letter-spacing: 0;
   }
 
-  @media (min-width: 768px) {
-    .ed-shell { padding-inline: 40px; }
+  .t-small {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    letter-spacing: 0.004em;
   }
 
-  .ed-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    column-gap: 20px;
+  .t-label {
+    font-size: 0.75rem;
+    line-height: 1.3;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    font-weight: 580;
   }
 
-  @media (min-width: 768px) {
-    .ed-grid {
-      grid-template-columns: repeat(12, minmax(0, 1fr));
-      column-gap: 24px;
-    }
+  .t-numeral {
+    font-size: clamp(2.25rem, 1.6rem + 2.6vw, 3.5rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-weight: 660;
+    font-variant-numeric: tabular-nums;
   }
 
-  /* ======================= rules ========================================= */
+  /* ============================================================
+     Translucent chrome (§12)
+     One translucent layer only — never stacked.
+     ============================================================ */
 
-  .ed-rule { border-top: 1px solid var(--color-ed-rule); }
-  .ed-rule-strong { border-top: 1px solid var(--color-ed-rule-strong); }
-  .ed-rule-ink { border-top: 1px solid var(--color-ed-ink); }
-
-  /* ======================= figures ======================================= */
-
-  /* A plate. Flat on the page, hairline border, white stock so product
-     screens read as reproductions rather than as live interface. */
-  .ed-plate {
-    background-color: var(--color-ed-white);
-    border: 1px solid var(--color-ed-rule);
-    border-radius: 2px;
+  .chrome {
+    background: var(--color-chrome);
+    backdrop-filter: blur(var(--blur-chrome)) saturate(180%);
+    -webkit-backdrop-filter: blur(var(--blur-chrome)) saturate(180%);
   }
 
-  .ed-plate-caption {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--color-ed-rule);
+  /* Scroll edge effect instead of a hard 1px divider (§12): the
+     chrome fades out where it stops overlapping content. */
+  .chrome-edge::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 100%;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent,
+      var(--color-hairline) 12%,
+      var(--color-hairline) 88%,
+      transparent
+    );
+    opacity: var(--edge-opacity, 0);
   }
 
-  /* A recessed field inside a plate, for data that is being READ OUT rather
-     than laid out — the waveform, the chart. Flat fill, no inner shadow. */
-  .ed-field {
-    background-color: var(--color-ed-paper-alt);
-    border-radius: 2px;
+  /* ============================================================
+     Skeleton placeholders — every one of these is scaffolding to
+     be replaced section by section.
+     ============================================================ */
+
+  .placeholder {
+    border: 1px dashed var(--color-hairline);
+    border-radius: var(--radius-card);
+    background: color-mix(in oklab, var(--color-surface-sunken) 60%, transparent);
+    color: var(--color-ink-faint);
   }
 
-  .ed-field-ink {
-    background-color: var(--color-ed-ink);
-    border-radius: 2px;
+  /* ============================================================
+     Ambient loaders — not gesture-driven, so a plain CSS loop is
+     fine (the spring rule is for anything a user can touch).
+     ============================================================ */
+
+  @keyframes caret-blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
   }
-
-  /* ======================= controls ====================================== */
-
-  .ed-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    border-radius: 2px;
-    font-family: var(--font-sans);
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: -0.008em;
-    white-space: nowrap;
-    transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
-  }
-
-  .ed-btn-primary {
-    background-color: var(--color-ed-ink);
-    color: var(--color-ed-paper);
-  }
-
-  .ed-btn-primary:hover { background-color: var(--color-ed-signal); }
-
-  .ed-btn-secondary {
-    background-color: transparent;
-    color: var(--color-ed-ink);
-    border: 1px solid var(--color-ed-rule-strong);
-  }
-
-  .ed-btn-secondary:hover { border-color: var(--color-ed-ink); }
-
-  /* A text link that behaves like one: an underline that arrives on hover,
-     offset far enough not to clip the descenders. */
-  .ed-link {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 8px;
-    font-weight: 600;
-    font-size: 15px;
-    color: var(--color-ed-ink);
-    text-decoration-line: underline;
-    text-decoration-color: transparent;
-    text-underline-offset: 4px;
-    transition: text-decoration-color 120ms ease, color 120ms ease;
-  }
-
-  .ed-link:hover {
-    color: var(--color-ed-signal);
-    text-decoration-color: currentColor;
-  }
-
-  /* A pathway tag. Not a pill: a squared tag with a hairline. */
-  .ed-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding: 5px 9px;
-    border: 1px solid var(--color-ed-rule);
-    border-radius: 2px;
-    font-family: var(--font-mono);
-    font-size: 11.5px;
-    letter-spacing: 0.01em;
-    color: var(--color-ed-faint);
-  }
-
-  .ed-tag-on {
-    border-color: var(--color-ed-ink);
-    color: var(--color-ed-ink);
-  }
-
-  /* The one place a solid signal block appears at small size. */
-  .ed-mark {
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    background-color: var(--color-ed-signal);
+  .chat-caret {
+    animation: caret-blink 1s step-end infinite;
   }
 }
 
-/* ======================= voice capture ================================== */
-
-.ed-wave-bar {
-  transform-box: fill-box;
-  transform-origin: 50% 100%;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .ed-wave-bar {
-    animation: ed-wave 1500ms cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
-  }
-
-  .ed-caret { animation: ed-caret 1100ms steps(1, end) infinite; }
-}
-
-@keyframes ed-wave {
-  from { transform: scaleY(0.22); }
-  to   { transform: scaleY(1); }
-}
-
-@keyframes ed-caret {
-  0%, 49%   { opacity: 1; }
-  50%, 100% { opacity: 0; }
-}
+/* ============================================================
+   Accessibility (§14)
+   Three independent signals, honored globally and again inside
+   each component that animates or uses translucency.
+   ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    transition-duration: 0.01ms !important;
+  html { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .chrome {
+    background: var(--color-surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .chrome {
+    background: var(--color-surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-bottom: 1px solid var(--color-ink);
+  }
+  .placeholder { border-color: var(--color-ink-muted); }
+  body { color: oklch(12% 0.01 260); }
 }

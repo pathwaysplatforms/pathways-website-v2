@@ -1,70 +1,51 @@
 import type { Metadata, Viewport } from "next";
-import {
-  Instrument_Sans,
-  Instrument_Serif,
-  JetBrains_Mono,
-} from "next/font/google";
+import { Urbanist } from "next/font/google";
+import { Footer } from "@/components/layout/Footer";
+import { Nav } from "@/components/layout/Nav";
 import "./globals.css";
 
-/**
- * Display. One weight, high contrast — the reason it reads as a publication
- * rather than as an interface.
- */
-const instrumentSerif = Instrument_Serif({
+const urbanist = Urbanist({
   subsets: ["latin"],
-  weight: "400",
-  display: "swap",
-  variable: "--font-instrument-serif",
-});
-
-/** Interface and body. */
-const instrumentSans = Instrument_Sans({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-instrument-sans",
-});
-
-/** Labels, captions, datelines and every figure in a plate. */
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  display: "swap",
-  variable: "--font-jetbrains-mono",
+  weight: ["600"],
+  variable: "--font-urbanist",
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://pathways.xx"),
-  title: {
-    default: "Pathways — Canadian immigration, mapped to your file",
-    template: "%s — Pathways",
-  },
+  title: "Pathways — AI guidance for your immigration journey",
   description:
-    "Pathways maps 107 Canadian immigration pathways against one profile and tracks every Express Entry draw since 2015.",
-  openGraph: {
-    type: "website",
-    siteName: "Pathways",
-    title: "Pathways — Canadian immigration, mapped to your file",
-    description:
-      "Pathways maps 107 Canadian immigration pathways against one profile and tracks every Express Entry draw since 2015.",
-  },
-  robots: { index: true, follow: true },
+    "Pathways uses AI and live IRCC data to show you which immigration routes are open to you, and what to do next.",
 };
 
 export const viewport: Viewport = {
-  themeColor: "#FBFAF7",
-  width: "device-width",
-  initialScale: 1,
+  colorScheme: "light",
+  themeColor: "#ffffff",
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      className={`${instrumentSerif.variable} ${instrumentSans.variable} ${jetbrainsMono.variable}`}
-    >
-      <body>{children}</body>
+    <html lang="en" className={urbanist.variable}>
+      <head>
+        {/* Entrance animations start from opacity 0, which is rendered into the
+            SSR HTML. If JS never runs, that would leave the page blank — so
+            without JS the reveals are simply on. */}
+        <noscript>
+          <style>{`[data-reveal]{opacity:1!important;transform:none!important}`}</style>
+        </noscript>
+      </head>
+      <body>
+        {/* Wayfinding: a way out of the chrome on the first Tab (skill §16) */}
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-pill focus:bg-accent focus:px-5 focus:py-2.5 focus:text-on-accent"
+        >
+          Skip to content
+        </a>
+        <Nav />
+        {children}
+        <Footer />
+      </body>
     </html>
   );
 }

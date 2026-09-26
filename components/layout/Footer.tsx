@@ -1,89 +1,130 @@
-import Link from "next/link";
-
-import { MonoLabel } from "@/components/ui/MonoLabel";
-import { Section } from "@/components/ui/Section";
-import {
-  DATA_SOURCE_NOTE,
-  DISCLAIMER,
-  DRAW_SUMMARY_FALLBACK,
-  PRIVACY_POSTURE,
-  SITE,
-} from "@/lib/fixtures";
-
-/** Computed at module scope on the server — no hydration mismatch. */
-const YEAR = new Date().getFullYear();
-
-/** Pinned to UTC so the printed day cannot shift with the server's zone. */
-const LAST_UPDATED = new Intl.DateTimeFormat("en-CA", {
-  dateStyle: "long",
-  timeZone: "UTC",
-}).format(new Date(DRAW_SUMMARY_FALLBACK.lastUpdatedIso));
-
-const LEGAL_LINKS: readonly { href: string; label: string }[] = [
-  { href: "/legal/disclaimer", label: "Disclaimer" },
-  { href: "/legal/privacy", label: "Privacy" },
-];
+import { Button } from "@/components/ui/Button";
+import { Container } from "@/components/ui/Container";
+import { NAV_SECTIONS } from "@/lib/sections";
 
 /**
- * The colophon. Deliberately on paper, not ink: the closing block above it is
- * the only dark band on the site, and a dark footer directly beneath it would
- * merge the two into one slab and cost the closing its weight.
+ * SKELETON — contact form and the legal shelf. The form is not wired to
+ * anything yet; the legal pages do not exist yet either.
  */
 export function Footer() {
   return (
-    <Section
-      as="footer"
-      pad="default"
-      grid
-      innerClassName="gap-y-10"
-      aria-label="Site footer"
-    >
-      <div className="col-span-4 md:col-span-5">
-        <span className="font-display text-[23px] leading-none tracking-[-0.01em] text-ed-ink">
-          {SITE.name}
-        </span>
-        <p className="mt-5 max-w-[46ch] text-[13.5px] leading-relaxed text-ed-muted">
-          {DISCLAIMER}
-        </p>
-      </div>
+    <footer className="border-t border-hairline bg-canvas">
+      <Container className="grid gap-12 py-20 lg:grid-cols-[1fr_1fr] lg:gap-20">
+        {/* Contact */}
+        <div>
+          <h2 className="t-heading text-ink">Get in touch</h2>
+          <p className="t-body mt-3 max-w-[40ch] text-ink-muted">
+            {/* PLACEHOLDER copy */}
+            One line on who should write to us and what to expect back.
+          </p>
 
-      <div className="col-span-4 md:col-span-3 md:col-start-7">
-        <MonoLabel className="block border-t border-ed-ink pt-3">
-          Sources
-        </MonoLabel>
-        <p className="mt-4 text-[13.5px] leading-relaxed text-ed-muted">
-          {DATA_SOURCE_NOTE}
-        </p>
-        <p className="ed-num mt-4 text-[12px] text-ed-ink">
-          Updated {LAST_UPDATED}
-        </p>
-      </div>
+          <form className="mt-7 flex flex-col gap-3">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Field id="contact-name" label="Name" type="text" placeholder="Your name" />
+              <Field
+                id="contact-email"
+                label="Email"
+                type="email"
+                placeholder="you@example.com"
+              />
+            </div>
+            <label className="sr-only" htmlFor="contact-message">
+              Message
+            </label>
+            <textarea
+              id="contact-message"
+              rows={4}
+              placeholder="How can we help?"
+              className="t-body resize-y rounded-card border border-hairline bg-surface px-4 py-3 text-ink placeholder:text-ink-faint"
+            />
+            <div className="flex items-center gap-4">
+              <Button type="submit" variant="secondary">
+                Send
+              </Button>
+              <span className="t-small text-ink-faint">
+                Placeholder — not wired up yet.
+              </span>
+            </div>
+          </form>
+        </div>
 
-      <div className="col-span-4 md:col-span-3 md:col-start-10">
-        <MonoLabel className="block border-t border-ed-ink pt-3">
-          Legal
-        </MonoLabel>
-        <nav aria-label="Legal" className="mt-4">
-          <ul className="flex flex-col gap-2">
-            {LEGAL_LINKS.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className="text-[13.5px] text-ed-ink transition-colors duration-150 hover:text-ed-signal"
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-        <p className="mt-4 max-w-[32ch] text-[13.5px] leading-relaxed text-ed-muted">
-          {PRIVACY_POSTURE}
+        {/* Shelf */}
+        <div className="grid gap-10 sm:grid-cols-2 lg:justify-items-end">
+          <nav aria-label="Sections">
+            <h2 className="t-label text-ink-faint">Sections</h2>
+            <ul className="mt-4 flex flex-col gap-2.5">
+              {NAV_SECTIONS.map((s) => (
+                <li key={s.id}>
+                  <a
+                    href={`#${s.id}`}
+                    className="t-small text-ink-muted no-underline hover:text-ink"
+                  >
+                    {s.navLabel}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <nav aria-label="Legal">
+            <h2 className="t-label text-ink-faint">Legal</h2>
+            <ul className="mt-4 flex flex-col gap-2.5">
+              {[
+                ["Privacy policy", "/legal/privacy"],
+                ["Terms of use", "/legal/terms"],
+                ["Disclaimer", "/legal/disclaimer"],
+              ].map(([label, href]) => (
+                <li key={href}>
+                  <a
+                    href={href}
+                    className="t-small text-ink-muted no-underline hover:text-ink"
+                  >
+                    {label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <p className="t-small mt-4 max-w-[26ch] text-ink-faint">
+              Placeholder — these pages are not built yet.
+            </p>
+          </nav>
+        </div>
+      </Container>
+
+      <Container className="flex flex-wrap items-center justify-between gap-4 border-t border-hairline py-7">
+        <p className="t-small text-ink-faint">
+          © {new Date().getFullYear()} Pathways
         </p>
-        <p className="ed-num mt-5 text-[12px] text-ed-faint">
-          © {YEAR} {SITE.name}
+        <p className="t-small text-ink-faint">
+          Guidance only — not legal advice.
         </p>
-      </div>
-    </Section>
+      </Container>
+    </footer>
+  );
+}
+
+function Field({
+  id,
+  label,
+  type,
+  placeholder,
+}: {
+  id: string;
+  label: string;
+  type: string;
+  placeholder: string;
+}) {
+  return (
+    <div>
+      <label className="sr-only" htmlFor={id}>
+        {label}
+      </label>
+      <input
+        id={id}
+        type={type}
+        placeholder={placeholder}
+        className="t-body w-full rounded-pill border border-hairline bg-surface px-5 py-3 text-ink placeholder:text-ink-faint"
+      />
+    </div>
   );
 }
