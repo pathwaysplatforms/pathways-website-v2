@@ -58,8 +58,14 @@ html {
   color-scheme: light;
 
   /* Nav is translucent and content scrolls under it (§12), so
-     anchor targets need to clear its height. */
-  scroll-behavior: smooth;
+     anchor targets need to clear its height.
+
+     scroll-behavior stays "auto", not "smooth": GSAP ScrollTrigger (the
+     Features section's pin) runs its own rAF-driven scroll tracking, and
+     the browser's native smooth-scroll animation fights it — anchor
+     clicks were updating the URL hash but silently failing to scroll at
+     all, site-wide, the moment ScrollTrigger became active on the page. */
+  scroll-behavior: auto;
   scroll-padding-top: 6rem;
   -webkit-text-size-adjust: 100%;
 }
@@ -152,6 +158,18 @@ body {
     font-variant-numeric: tabular-nums;
   }
 
+  /* Feature cards grow ~1.5x while focused, so their type is set 10% under
+     the site scale to keep the enlarged text from reading oversized. */
+  .feature-card .t-heading {
+    font-size: calc(clamp(1.25rem, 1.1rem + 0.7vw, 1.5rem) * 0.9);
+  }
+  .feature-card .t-small {
+    font-size: calc(0.875rem * 0.9);
+  }
+  .feature-card .t-label {
+    font-size: calc(0.75rem * 0.9);
+  }
+
   /* ============================================================
      Translucent chrome (§12)
      One translucent layer only — never stacked.
@@ -214,7 +232,8 @@ body {
    ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
+  /* scroll-behavior is already "auto" unconditionally above (GSAP
+     ScrollTrigger conflict), so there's nothing left to override here. */
   *,
   *::before,
   *::after {

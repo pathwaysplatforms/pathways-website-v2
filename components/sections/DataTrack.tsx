@@ -1,35 +1,69 @@
 "use client";
 
-import { animate, motion, useMotionValue, useReducedMotion } from "motion/react";
+import { animate, motion, useAnimationFrame, useMotionValue, useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { project, rubberband, springMomentum } from "@/lib/motion";
+import { project, springMomentum } from "@/lib/motion";
 
 type Card = { value: string; label: string };
 
-/** PLACEHOLDER figures — swap for real numbers when we build this section. */
+/**
+ * What sets Pathways apart: the coverage and freshness of our own data, not
+ * general Canadian immigration stats — Problem.tsx already carries those,
+ * sourced externally. Every figure below traces to the production app
+ * (pathways-final), current as of the September 2026 data audit:
+ * - Pathway/step/document counts: docs/backfill/proposal.md — 107 steps
+ *   and 86 document requirements across the 14 pathways fully authored
+ *   so far.
+ * - Refresh cadence: .github/workflows/scraper-draws.yml (Express Entry
+ *   draws, every 2 days) and scraper-pathways.yml (full pathway content,
+ *   every 7 days).
+ * - Matching pipeline stages: docs/voice-onboarding-snapshot.md.
+ * - Voice-intake field count: src/lib/completeness.ts (19 fields).
+ */
 const CARDS: Card[] = [
-  { value: "107", label: "pathways tracked" },
-  { value: "Daily", label: "refreshed IRCC data" },
-  { value: "00", label: "third stat — TBD" },
-  { value: "00", label: "fourth stat — TBD" },
-  { value: "00", label: "fifth stat — TBD" },
+  { value: "14", label: "Canadian pathways mapped, step by step" },
+  { value: "107", label: "individual steps tracked across them" },
+  { value: "86", label: "document requirements tracked" },
+  { value: "2 days", label: "between Express Entry draw refreshes" },
+  { value: "7 days", label: "between full pathway re-scans" },
+  { value: "8-stage", label: "AI pipeline behind every match" },
+  { value: "19", label: "fields our voice intake actually needs" },
 ];
 
 const DRAG_THRESHOLD = 10; // px of hysteresis before committing (skill §10)
+const AUTOPLAY_PX_PER_SEC = 34; // calm drift — well clear of the ~0.2Hz ceiling in §14
+
+/** Keeps a value inside (-width, 0] by wrapping, not clamping — there's no
+ *  edge to stop at, since CARDS renders twice back to back and looping by
+ *  exactly one set's width is invisible. */
+function wrap(value: number, width: number) {
+  if (width <= 0) return value;
+  const wrapped = value % width;
+  return wrapped > 0 ? wrapped - width : wrapped;
+}
 
 /**
- * Draggable horizontal track.
+ * Infinite drifting track — autoplay with fully interruptible drag.
  *
- * - 1:1 tracking from the grab point, with pointer capture so the drag
- *   survives leaving the element (§2).
+ * - Drifts left on its own at a constant, gentle rate; CARDS is rendered
+ *   twice so wrapping the motion value by one set's width loops seamlessly.
+ * - The instant a pointer touches it, the drift stops — feedback belongs on
+ *   pointer-*down*, not on release (§1) — and 1:1 tracking takes over from
+ *   wherever the drift left off, the live presentation value, not a snapped
+ *   target (§3).
  * - Velocity history across the last few moves, not just the current point (§2).
  * - On release, the resting position is *projected* from velocity using
  *   Apple's exponential-decay function, then the spring is handed the release
- *   velocity so there's no seam between drag and animation (§5, §6).
- * - Past the ends, resistance grows progressively rather than stopping hard (§9).
+ *   velocity so there's no seam between drag and animation (§5, §6). Autoplay
+ *   resumes only once that spring settles.
+ * - A single change listener wraps the motion value whenever it drifts past
+ *   a set's width, regardless of whether autoplay, a drag, or the release
+ *   spring is what moved it — so nothing needs to special-case the loop
+ *   point mid-flight.
  *
- * Under prefers-reduced-motion this degrades to a plain native scroller — the
- * content is all still reachable, just without the momentum physics (§14).
+ * Under prefers-reduced-motion this degrades to a plain native scroller with
+ * no autoplay and no duplicated content — reachable, just without the
+ * physics or the loop (§14).
  */
 export function DataTrack() {
   const reduced = useReducedMotion();
@@ -37,8 +71,9 @@ export function DataTrack() {
   const trackRef = useRef<HTMLUListElement>(null);
   const x = useMotionValue(0);
 
-  const [minX, setMinX] = useState(0);
-  const bounds = useRef({ min: 0, width: 0 });
+  const [singleWidth, setSingleWidth] = useState(0);
+  const widthRef = useRef(0);
+  const autoplayRef = useRef(true);
 
   // Gesture state
   const drag = useRef({
@@ -50,16 +85,14 @@ export function DataTrack() {
   });
 
   const measure = useCallback(() => {
-    const vp = viewportRef.current;
     const track = trackRef.current;
-    if (!vp || !track) return;
-    const overflow = track.scrollWidth - vp.clientWidth;
-    const min = Math.min(0, -overflow);
-    bounds.current = { min, width: vp.clientWidth };
-    setMinX(min);
-    if (x.get() < min) x.set(min);
-    if (x.get() > 0) x.set(0);
-  }, [x]);
+    if (!track) return;
+    // Two copies of CARDS sit back to back, so half the track's full width
+    // is the width of one loop — the amount a wrap needs to shift by.
+    const width = track.scrollWidth / 2;
+    widthRef.current = width;
+    setSingleWidth(width);
+  }, []);
 
   useLayoutEffect(() => {
     measure();
@@ -71,16 +104,29 @@ export function DataTrack() {
     return () => ro.disconnect();
   }, [measure]);
 
-  const clampWithResistance = useCallback((raw: number) => {
-    const { min, width } = bounds.current;
-    if (raw > 0) return rubberband(raw, width);
-    if (raw < min) return min + rubberband(raw - min, width);
-    return raw;
-  }, []);
+  // Wherever x came from — autoplay, a drag, or the release spring — this
+  // is the one place the loop point is enforced, so none of those need to
+  // special-case crossing it mid-flight.
+  useEffect(() => {
+    const unsubscribe = x.on("change", (v) => {
+      const width = widthRef.current;
+      if (width <= 0) return;
+      if (v <= -width || v > 0) x.set(wrap(v, width));
+    });
+    return unsubscribe;
+  }, [x]);
+
+  useAnimationFrame((_, delta) => {
+    if (reduced || !autoplayRef.current || widthRef.current <= 0) return;
+    x.set(x.get() - (AUTOPLAY_PX_PER_SEC * delta) / 1000);
+  });
 
   const onPointerDown = useCallback(
     (e: React.PointerEvent) => {
       if (reduced || e.button !== 0) return;
+      // Stop the drift the instant it's touched — this is the feedback,
+      // not the eventual drag (§1).
+      autoplayRef.current = false;
       drag.current = {
         active: true,
         committed: false,
@@ -109,8 +155,10 @@ export function DataTrack() {
         e.currentTarget.setPointerCapture(e.pointerId);
       }
 
-      // Respect where they grabbed it — no snap to center (§2).
-      x.set(clampWithResistance(d.startVal + dx));
+      // Respect where they grabbed it — no snap to center (§2). No
+      // rubber-banding either: there's no edge, just a loop, so the change
+      // listener above wraps this if it runs past a set's width.
+      x.set(d.startVal + dx);
 
       const now = performance.now();
       d.history.push({ x: e.clientX, t: now });
@@ -119,7 +167,7 @@ export function DataTrack() {
         d.history.shift();
       }
     },
-    [clampWithResistance, x],
+    [x],
   );
 
   const onPointerUp = useCallback(
@@ -131,20 +179,31 @@ export function DataTrack() {
       if (e.currentTarget.hasPointerCapture?.(e.pointerId)) {
         e.currentTarget.releasePointerCapture(e.pointerId);
       }
-      if (!d.committed) return;
+      if (!d.committed) {
+        // A tap, not a drag — nothing moved, resume drifting.
+        autoplayRef.current = true;
+        return;
+      }
 
       const first = d.history[0];
       const last = d.history[d.history.length - 1];
       const dt = last.t - first.t;
       const velocity = dt > 0 ? ((last.x - first.x) / dt) * 1000 : 0; // px/s
 
-      const { min } = bounds.current;
       // Animate to where the gesture is *going*, not where it stopped (§6).
-      const projected = x.get() + project(velocity);
-      const target = Math.max(min, Math.min(0, projected));
+      // No clamping to a range — it's a loop, so any target is reachable,
+      // and the change listener above wraps it into view mid-flight.
+      const target = x.get() + project(velocity);
 
       // Hand the release velocity straight to the spring — no seam (§5).
-      animate(x, target, { ...springMomentum, velocity });
+      // Autoplay only picks back up once the spring has settled.
+      animate(x, target, {
+        ...springMomentum,
+        velocity,
+        onComplete: () => {
+          autoplayRef.current = true;
+        },
+      });
     },
     [x],
   );
@@ -153,23 +212,30 @@ export function DataTrack() {
   // way through the content (§16, flexibility).
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
-      const step = bounds.current.width * 0.6;
+      const step = (viewportRef.current?.clientWidth ?? 0) * 0.6;
       let target: number | null = null;
       if (e.key === "ArrowRight") target = x.get() - step;
       if (e.key === "ArrowLeft") target = x.get() + step;
-      if (e.key === "Home") target = 0;
-      if (e.key === "End") target = bounds.current.min;
       if (target === null) return;
       e.preventDefault();
-      animate(x, Math.max(bounds.current.min, Math.min(0, target)), springMomentum);
+      autoplayRef.current = false;
+      animate(x, target, {
+        ...springMomentum,
+        onComplete: () => {
+          autoplayRef.current = true;
+        },
+      });
     },
     [x],
   );
 
-  // Release the grab if the pointer is lost outside the component.
+  // Release the grab if the pointer is lost outside the component, and
+  // resume drifting since no committed drag means nothing to spring from.
   useEffect(() => {
     const cancel = () => {
+      const wasCommitted = drag.current.committed;
       drag.current.active = false;
+      if (!wasCommitted) autoplayRef.current = true;
     };
     window.addEventListener("pointercancel", cancel);
     return () => window.removeEventListener("pointercancel", cancel);
@@ -196,7 +262,7 @@ export function DataTrack() {
       style={{ touchAction: "pan-y" }}
       tabIndex={0}
       role="group"
-      aria-label="Data figures — drag or use arrow keys"
+      aria-label="Data figures — drifts on its own, drag or use arrow keys to take over"
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
@@ -208,13 +274,20 @@ export function DataTrack() {
         style={{ x }}
       >
         {CARDS.map((c, i) => (
-          <li key={i}>
+          <li key={`a-${i}`}>
+            <DataCard {...c} />
+          </li>
+        ))}
+        {/* Second copy makes the loop seamless (see `wrap`); hidden from
+            assistive tech so the figures aren't announced twice. */}
+        {CARDS.map((c, i) => (
+          <li key={`b-${i}`} aria-hidden>
             <DataCard {...c} />
           </li>
         ))}
       </motion.ul>
       <p className="t-small mt-4 text-ink-faint" aria-hidden>
-        Drag to explore {minX < 0 ? "→" : ""}
+        Drag anytime to take over — it drifts on its own otherwise
       </p>
     </div>
   );
