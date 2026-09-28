@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { InteractiveHoverButton } from "@/components/ui/InteractiveHoverButton";
 import { springDefault, springSheet } from "@/lib/motion";
-import { FORM_TARGET, NAV_SECTIONS, type SectionId } from "@/lib/sections";
+import { NAV_SECTIONS, type SectionId } from "@/lib/sections";
 
 /**
  * Translucent chrome with content scrolling underneath (skill §12) — not an
@@ -99,7 +99,7 @@ export function Nav() {
 
         {/* Try it now — right */}
         <div className="flex shrink-0 items-center gap-2">
-          <InteractiveHoverButton href={`#${FORM_TARGET}`} text="Try it now" />
+          <InteractiveHoverButton href="/waitlist" text="Try it now" />
           <MenuToggle open={menuOpen} onToggle={() => setMenuOpen((v) => !v)} />
         </div>
       </Container>
